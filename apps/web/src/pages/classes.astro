@@ -11,7 +11,7 @@ import Base from "@/layouts/Base.astro";
 import { formatDate } from "@/lib/utils";
 
 // Décor derrière chaque sceau de classe : des scènes du jeu, pas des illustrations de la classe.
-const SCENES = ["01", "02", "03", "04", "06", "07", "10", "13"].map((n) => `/assets/steam-screenshot-${n}.jpg`);
+const SCENES = ["01", "02", "03", "04", "06", "07", "10", "13"].map((n) => `/images/steam-screenshot-${n}.jpg`);
 
 const COLS = [
   { key: "pve", label: "PvE" },
@@ -29,7 +29,7 @@ const COLS = [
 
     <!-- Relevé maxroll.gg (tier lists) : titre sur panneau illustré, cartes 2 colonnes image + titre 18/600, h 100. -->
     <section class="relative isolate mt-[24px] overflow-hidden px-[20px] pt-[32px]">
-      <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><Picture src="/assets/steam-screenshot-08.jpg" alt="" class="size-full object-cover" /></div>
+      <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><Picture src="/images/steam-screenshot-08.jpg" alt="" class="size-full object-cover" /></div>
       <SectionTitle as="h1" icon={ChartNoAxesColumnIncreasingIcon} title="Tier list des classes" color="#ff772f" />
       <p class="mt-[12px] max-w-[640px] text-[16px] leading-[24px] text-[#95989b]">
         Une note n'apparaît que si une source fiable la donne pour la version globale. Pas de tier list inventée : les autres classes restent en « – ».

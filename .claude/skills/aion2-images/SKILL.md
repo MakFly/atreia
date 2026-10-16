@@ -74,8 +74,8 @@ of `https://aion2.plaync.com/fr-fr/board/movie_clip/list` in a browser.
 ## Boundaries
 
 - Download to a scratch directory, pick, then copy only the chosen files into
-  the site (for example `apps/web/public/images/`), with their manifest
-  entries. Do not commit whole scraped batches.
+  `apps/web/public/images/`, with their entries in
+  `apps/web/public/images/manifest.json`. Do not commit whole scraped batches.
 - News images are often text-heavy banners (maintenance, sanctions, payment
   notices): look at them before using one as an illustration.
 - Keep the user-facing credit next to the image or in the page footer:

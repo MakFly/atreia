@@ -25,7 +25,7 @@ cons:
   - "Peu de PV, doit rester dans le dos de la cible"
   - "Sensible au ping au-delà de 150 ms"
 cover:
-  src: "/assets/steam-screenshot-09.jpg"
+  src: "/images/steam-screenshot-09.jpg"
   alt: "Une combattante déchaîne ses lames sur un groupe d'ennemis"
 ---
 
@@ -199,7 +199,7 @@ Sources : [PlayNews (FR), puissance de combat (11/08/2026, données KR)](https:/
 
 ## 5. Le healer : Clerc
 
-![Une Daeva en tenue blanche, bâton à la main, dans une prairie (© NC Corporation)](/assets/steam-screenshot-12.jpg)
+![Une Daeva en tenue blanche, bâton à la main, dans une prairie (© NC Corporation)](/images/steam-screenshot-12.jpg)
 
 **Confirmé** : le Clerc est le healer principal d'AION 2 (masse, soins de zone, boucliers, purification, résurrection), classé S en PvE de groupe. Le **Chantre** est un support hybride : il buffe et soigne un peu, mais il ne remplace pas le Clerc en donjon (déduit des guides de classes, pas d'un guide qui le dit explicitement).
 

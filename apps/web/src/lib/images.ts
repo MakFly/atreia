@@ -1,4 +1,4 @@
-// Dimensions des images de public/assets (sources et licences : public/assets/manifest.json).
+// Dimensions des images de public/images (sources et licences : public/images/manifest.json).
 // Chaque JPEG a une variante WebP de même nom (1600 px max) : <Picture> sert la WebP, le JPEG reste pour Open Graph.
 const SIZES: Record<string, [number, number]> = {
   "steam-background.jpg": [1438, 810],
@@ -16,4 +16,4 @@ export function imageSize(src: string): { width: number; height: number } {
 export const webpOf = (src: string) => src.replace(/\.(jpe?g|png)$/i, ".webp");
 
 /** Image par défaut des partages sociaux. */
-export const DEFAULT_SHARE_IMAGE = "/assets/steam-background.jpg";
+export const DEFAULT_SHARE_IMAGE = "/images/steam-background.jpg";

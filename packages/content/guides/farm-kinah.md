@@ -6,7 +6,7 @@ updated: 2026-10-16
 status: a-venir
 order: 1
 cover:
-  src: "/assets/steam-screenshot-04.jpg"
+  src: "/images/steam-screenshot-04.jpg"
   alt: "Un combat contre des monstres en pleine nature"
 ---
 

@@ -11,7 +11,7 @@ highlights:
   - "N'ouvre pas l'onglet Duty avant le niveau 45."
   - "Le marché reste limité à ton serveur et l'échange direct est désactivé."
 cover:
-  src: "/assets/steam-screenshot-06.jpg"
+  src: "/images/steam-screenshot-06.jpg"
   alt: "Un groupe de Daevas face à un boss de raid"
 ---
 

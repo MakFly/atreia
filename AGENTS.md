@@ -11,7 +11,7 @@ site in production.
 | `apps/web` | Astro 7 static site, Tailwind 4, shadcn/ui as React 19 islands (search, mobile menu). Generates the sitemap. |
 | `apps/server` | Hono 4 API on Node 22 (`tsx watch` in dev, `tsup` bundle in prod). Serves `apps/web/dist` in production. |
 | `packages/shared` | Types, zod frontmatter schema, guide parser, EU server data. `@aion2/shared/browser` is the entry without zod or yaml for the front end. |
-| `packages/content/guides` | The guides: one Markdown (or MDX) file per guide. |
+| `packages/content/guides` | The guides: one Markdown file per guide. |
 
 ## Tooling rules
 
@@ -55,12 +55,12 @@ it finds a port nobody listens on. Override the start with
   parsed guides and only invalidates that cache when `content.config.ts`
   itself changes, so new frontmatter fields are otherwise silently dropped.
 - Guide covers use the optional `cover: { src, alt }` frontmatter field;
-  images live in `apps/web/public/assets/` with their source and license in
-  `assets/manifest.json` (see the `aion2-images` skill).
+  images live in `apps/web/public/images/` with their source and license in
+  `images/manifest.json` (see the `aion2-images` skill).
 
 ## Adding a guide
 
-Create `packages/content/guides/<kebab-case-slug>.md` (or `.mdx`). The
+Create `packages/content/guides/<kebab-case-slug>.md`. The
 frontmatter fields (`title`, `summary`, `category`, `updated`, `status`,
 `tags`, `order`, `highlights`, optional `classes`, `ratings`, `pros`, `cons`)
 are validated by the schema in `packages/shared`; see `README.md` for a full

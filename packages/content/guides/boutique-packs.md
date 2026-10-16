@@ -10,7 +10,7 @@ highlights:
   - "L'abonnement à 14,99 $ est la seule offre indispensable : il permet de vendre."
   - "Évite le Daeva Pass Planet's Call, qui se termine le 28 octobre."
 cover:
-  src: "/assets/official-halloween-2026-costumes.jpg"
+  src: "/images/official-halloween-2026-costumes.jpg"
   alt: "Les costumes d'Halloween 2026 de la boutique"
 ---
 

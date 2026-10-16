@@ -10,7 +10,7 @@ highlights:
   - "GuildOrder et Wikily : planificateurs et wiki avec une interface FR."
   - "Mein-MMO : la meilleure couverture de l'actu EU."
 cover:
-  src: "/assets/steam-screenshot-07.jpg"
+  src: "/images/steam-screenshot-07.jpg"
   alt: "Un Daeva survole une île tropicale"
 ---
 

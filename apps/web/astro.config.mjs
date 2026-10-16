@@ -1,9 +1,9 @@
 // @ts-check
-import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
+import rehypeImages from "./src/lib/rehype-images.ts";
 
 export default defineConfig({
   // URL publique : utilisée pour le sitemap et les URLs canoniques.
@@ -20,7 +20,8 @@ export default defineConfig({
     "/aion2/classes": "/classes/",
     "/aion2/serveurs": "/serveurs/",
   },
-  integrations: [react(), mdx(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith("/aion2/") })],
+  integrations: [react(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith("/aion2/") })],
   
+  markdown: { rehypePlugins: [rehypeImages] },
   vite: { plugins: [tailwindcss()] },
 });
