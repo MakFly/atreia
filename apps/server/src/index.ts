@@ -29,6 +29,10 @@ if (existsSync(env.WEB_DIST_DIR)) {
       onFound: (_path, c) => c.header("Cache-Control", "public, max-age=31536000, immutable"),
     }),
   );
+  app.use("/images/*", async (c, next) => {
+    await next();
+    if (c.res.ok) c.header("Cache-Control", "public, max-age=604800, stale-while-revalidate=86400");
+  });
   // "/guides/x/" est servi depuis guides/x/index.html.
   app.use("*", serveStatic({ root }));
   app.notFound(async (c) =>
