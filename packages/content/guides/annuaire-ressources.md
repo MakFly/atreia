@@ -9,6 +9,9 @@ highlights:
   - "MetaBot : la base de données lue dans le client global, en français."
   - "GuildOrder et Wikily : planificateurs et wiki avec une interface FR."
   - "Mein-MMO : la meilleure couverture de l'actu EU."
+cover:
+  src: "/assets/steam-screenshot-07.jpg"
+  alt: "Un Daeva survole une île tropicale"
 ---
 
 > Annuaire construit le 16/10/2026 à partir de recherches web. Le conteneur n'a pas pu ouvrir les sites directement : **« actif »** veut dire « page indexée ou décrite récemment (sept.-oct. 2026) », pas « testé en direct ». Presque tout est fait par des fans, sauf la section 1.
@@ -85,7 +88,7 @@ Panorama comparatif : [ExitLag, « Aion 2 Interactive Map »](https://www.exitla
 
 ## 6. Marché et prix (Kinah)
 
-**Il n'existe aucune source de prix fiable pour l'EU aujourd'hui.** Il n'y a pas d'API officielle, le marché reste limité à ton serveur et il faut l'abonnement pour vendre (détails dans [Marché et API](/aion2/guides/marche-api/)).
+**Il n'existe aucune source de prix fiable pour l'EU aujourd'hui.** Il n'y a pas d'API officielle, le marché reste limité à ton serveur et il faut l'abonnement pour vendre (détails dans [Marché et API](/guides/marche-api/)).
 
 | Ressource | Lien | Utilité | EU |
 |---|---|---|---|

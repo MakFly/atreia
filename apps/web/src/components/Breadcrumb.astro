@@ -3,7 +3,18 @@
 import { ChevronRightIcon } from "lucide-react";
 interface Props { items: { label: string; href?: string }[] }
 const { items } = Astro.props;
+const breadcrumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: items.map((it, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: it.label,
+    item: new URL(it.href ?? Astro.url.pathname, Astro.site).href,
+  })),
+};
 ---
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbs)} />
 <nav aria-label="Fil d'Ariane" class="mx-[20px] border-b border-[#2b2c2c] pb-[14px] md:mx-[20px]">
   <ol class="flex flex-wrap items-center gap-x-[10px] gap-y-[4px] text-[14px] leading-[20px]">
     {items.map((it, i) => (

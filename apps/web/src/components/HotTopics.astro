@@ -41,7 +41,7 @@ const cats = (Object.keys(CATEGORIES) as Category[]).filter((c) => guides.some((
         <a href={guideHref(g.slug)}
           class="group flex h-[70px] items-center gap-[12px] overflow-hidden rounded-[8px] border-l-[4px] bg-[#121212] py-[8px] pr-[10px] pl-[8px] shadow-[inset_0_0_1px_0_#1c1c1c,0_0_1px_0_#1c1c1c] transition-[background,box-shadow] duration-150 hover:bg-[linear-gradient(90deg,rgba(5,122,240,0.1),#121212)] hover:shadow-[inset_0_0_1px_0_#057af0,0_0_1px_0_#057af0]"
           style={`border-left-color:${catColor(g.category)}`}>
-          <Cover category={g.category} tiny class="h-[54px] w-[90px] shrink-0 rounded-[4px] md:w-[104px]" />
+          <Cover category={g.category} image={g.cover} tiny class="h-[54px] w-[90px] shrink-0 rounded-[4px] md:w-[104px]" />
           <span class="flex min-w-0 flex-col">
             <span class="line-clamp-2 text-[16px] leading-[20px] font-semibold text-white">{g.title}</span>
             <span class="text-[14px] leading-[20px] text-[#e8e8e8]/80">{g.status === "a-venir" ? "En préparation" : formatDate(g.updated)}</span>

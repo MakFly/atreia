@@ -8,3 +8,4 @@ dist-preview
 .astro
 page.html
 apps/web/files.json
+.run

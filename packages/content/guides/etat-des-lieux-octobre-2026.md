@@ -10,6 +10,9 @@ highlights:
   - "Crée ton perso sur un serveur du lancement F2P, pas de l'accès anticipé."
   - "N'ouvre pas l'onglet Duty avant le niveau 45."
   - "Le marché reste limité à ton serveur et l'échange direct est désactivé."
+cover:
+  src: "/assets/steam-screenshot-06.jpg"
+  alt: "Un groupe de Daevas face à un boss de raid"
 ---
 
 > Synthèse faite à partir de recherches web le 10/10/2026. La plupart des sources sont des sites de fans ou de la presse. Pour les détails définitifs, vérifie les annonces officielles de NC (launcher PURPLE / page Steam).
@@ -99,4 +102,4 @@ Source : [Mein-MMO : live ticker du 07 au 09/10](https://mein-mmo.de/en/aion-2-s
 
 1. Crée ton perso sur un **serveur du lancement F2P** (liste plus haut), pas sur un serveur de l'accès anticipé.
 2. **N'ouvre pas l'onglet Duty** avant le niveau 45.
-3. Le choix du serveur et de la faction est détaillé dans [Bien démarrer](/aion2/guides/bien-demarrer/). Le farm de Kinah dépend du marché et de l'abonnement : voir [Farmer du Kinah](/aion2/guides/farm-kinah/).
+3. Le choix du serveur et de la faction est détaillé dans [Bien démarrer](/guides/bien-demarrer/). Le farm de Kinah dépend du marché et de l'abonnement : voir [Farmer du Kinah](/guides/farm-kinah/).

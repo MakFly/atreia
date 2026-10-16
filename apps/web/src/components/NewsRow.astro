@@ -12,7 +12,7 @@ const { guide: g } = Astro.props;
 ---
 <a href={guideHref(g.slug)}
   class="group flex flex-col gap-[12px] rounded-[12px] bg-[#121212] p-[8px] shadow-[inset_0_0_1px_0_#1c1c1c,0_0_1px_0_#1c1c1c] transition-shadow duration-150 hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c] sm:flex-row">
-  <Cover category={g.category} class="aspect-[16/9] w-full shrink-0 rounded-[8px] sm:aspect-auto sm:h-[130px] sm:w-[230px]" />
+  <Cover category={g.category} image={g.cover} class="aspect-[16/9] w-full shrink-0 rounded-[8px] sm:aspect-auto sm:h-[130px] sm:w-[230px]" />
   <div class="flex min-w-0 flex-1 flex-col px-[4px] pb-[4px] sm:py-[4px] sm:pr-[8px]">
     <div class="flex items-center justify-between gap-[8px]">
       <span class="rounded-[4px] border border-[#5c5c5c] px-[6px] text-[11px] leading-[16px] font-semibold text-[#95989b] uppercase">{CAT_TAG[g.category]}</span>

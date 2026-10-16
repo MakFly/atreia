@@ -9,32 +9,53 @@ import MobileNav from "@/components/MobileNav";
 import PrefsControls from "@/components/PrefsControls.astro";
 import SiteRail from "@/components/SiteRail.astro";
 import SearchDialog, { type SearchItem } from "@/components/SearchDialog";
-import { CompassIcon } from "lucide-react";
-import { GAMES } from "@/lib/games";
+import { DEFAULT_SHARE_IMAGE, imageSize } from "@/lib/images";
+import { BookOpenTextIcon } from "lucide-react";
 import { MAIN_NAV } from "@/lib/nav";
 import { getCollection } from "astro:content";
 
 interface Props {
   title: string;
   description: string;
+  /** Image de partage (Open Graph, Twitter), chemin sous public/ */
+  image?: { src: string; alt: string } | undefined;
+  type?: "website" | "article";
+  /** Dates ISO pour les articles */
+  modified?: string;
+  /** Données structurées propres à la page (schema.org), ajoutées au graphe du site */
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
 }
-const { title, description } = Astro.props;
+const { title, description, image, type = "website", modified, jsonLd = [], noindex = false } = Astro.props;
 const current = Astro.url.pathname;
 
 const entries = await getCollection("guides");
 const searchItems: SearchItem[] = [
   ...entries.map((e) => ({
-    href: `/aion2/guides/${e.id}/`,
+    href: `/guides/${e.id}/`,
     title: e.data.title,
     category: CATEGORIES[e.data.category].label,
     text: [e.data.summary, ...e.data.tags, ...(e.body ?? "").split("\n").filter((l) => l.startsWith("#"))].join(" "),
   })),
-  { href: "/aion2/serveurs/", title: "Serveurs EU", category: "Atreia", text: "serveurs europe paires elyos asmodiens accès anticipé f2p transfert" },
-  { href: "/aion2/classes/", title: "Les 8 classes", category: "Atreia", text: "classes gladiateur templier assassin rôdeur sorcier spiritualiste clerc chantre tier list notes" },
+  { href: "/serveurs/", title: "Serveurs EU", category: "Atreia", text: "serveurs europe paires elyos asmodiens accès anticipé f2p transfert" },
+  { href: "/classes/", title: "Les 8 classes", category: "Atreia", text: "classes gladiateur templier assassin rôdeur sorcier spiritualiste clerc chantre tier list notes" },
 ];
-const pageTitle = current === "/" ? "Atreia, guides de jeux en français" : current === "/aion2/" ? "AION 2 · Atreia" : `${title} · Atreia`;
+const pageTitle = current === "/" ? "Atreia, guides AION 2 en français" : `${title} · Atreia`;
 const canonical = new URL(current, Astro.site);
-const game = GAMES.find((g) => current.startsWith(g.href));
+
+const share = image ?? { src: DEFAULT_SHARE_IMAGE, alt: "Atréia brisée, fond officiel d'AION 2" };
+const shareUrl = new URL(share.src, Astro.site).href;
+const shareSize = imageSize(share.src);
+const siteUrl = new URL("/", Astro.site).href;
+const graph = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": `${siteUrl}#site`, url: siteUrl, name: "Atreia", inLanguage: "fr-FR",
+      description: "Guides AION 2 en français pour les serveurs européens." },
+    { "@type": "VideoGame", "@id": `${siteUrl}#game`, name: "AION 2", publisher: { "@type": "Organization", name: "NC Corporation" } },
+    ...jsonLd,
+  ],
+};
 ---
 <!doctype html>
 <html lang="fr" class="dark" data-faction="elyos" data-root="/" data-index="">
@@ -44,10 +65,26 @@ const game = GAMES.find((g) => current.startsWith(g.href));
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:site_name" content="Atreia" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="fr_FR" />
+    <meta property="og:image" content={shareUrl} />
+    <meta property="og:image:width" content={String(shareSize.width)} />
+    <meta property="og:image:height" content={String(shareSize.height)} />
+    <meta property="og:image:alt" content={share.alt} />
+    {type === "article" && modified && <meta property="article:modified_time" content={modified} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareUrl} />
+    <meta name="twitter:image:alt" content={share.alt} />
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M15 26C9 22 4 15 3 6c4 3 7 4 10 4-1 2-1 4 0 6-2 0-4 0-5-1 1 4 4 8 7 11z' fill='%23d9b45f'/%3E%3Cpath d='M17 26c6-4 11-11 12-20-4 3-7 4-10 4 1 2 1 4 0 6 2 0 4 0 5-1-1 4-4 8-7 11z' fill='%23e8643c'/%3E%3C/svg%3E" />
     <script is:inline>
       // Avant le premier rendu : faction mémorisée (le site est sombre uniquement).
@@ -65,26 +102,26 @@ const game = GAMES.find((g) => current.startsWith(g.href));
 
     <div class="md:pl-[96px]">
       <!-- Mobile : barre collante de 60 px (logo, recherche, menu). Desktop : header noir de 72 px sous lequel passe le rail. -->
-      <header class:list={["bg-chrome sticky top-0 z-[105] h-[60px] md:h-[72px]", current !== "/" && "md:static"]}>
+      <header class="bg-chrome sticky top-0 z-[105] h-[60px] md:static md:h-[72px]">
         <div class="flex h-full items-center gap-[8px] pr-[12px] pl-[20px] md:gap-0 md:pr-[36px] md:pl-[36px]">
           <a href="/" class="flex items-center gap-[8px] md:hidden">
             <Logo class="size-[32px]" />
             <span class="font-display text-[22px] font-semibold tracking-wide text-white">Atreia</span>
           </a>
-          <a href="/#jeux" class="group hidden items-center gap-[12px] md:flex">
-            <CompassIcon className="size-[22px] text-[#95989b] transition-colors group-hover:text-white" strokeWidth={1.5} />
-            <span class="hidden text-[16px] leading-[24px] whitespace-nowrap text-[#808191] transition-colors group-hover:text-white lg:inline">Parcourir les jeux</span>
+          <a href="/guides/" class="group hidden items-center gap-[12px] md:flex">
+            <BookOpenTextIcon className="size-[22px] text-[#95989b] transition-colors group-hover:text-white" strokeWidth={1.5} />
+            <span class="hidden text-[16px] leading-[24px] whitespace-nowrap text-[#808191] transition-colors group-hover:text-white lg:inline">Parcourir les guides</span>
           </a>
           <span class="mx-[24px] hidden h-[40px] w-px bg-[#2b2c2c] md:block" aria-hidden="true"></span>
           <div class="ml-auto md:ml-0 md:w-[260px] lg:w-[340px]">
-            <SearchDialog client:idle items={searchItems} label={game ? `Rechercher dans ${game.name}` : "Rechercher sur Atreia"} />
+            <SearchDialog client:idle items={searchItems} label="Rechercher dans les guides AION 2" />
           </div>
           <div class="ml-auto hidden md:block"><PrefsControls /></div>
-          <MobileNav client:media="(max-width: 767px)" games={GAMES} links={MAIN_NAV} current={current} />
+          <MobileNav client:media="(max-width: 767px)" links={MAIN_NAV} current={current} />
         </div>
       </header>
 
-      {game && <GameNav current={current} name={game.name} />}
+      <GameNav current={current} name="AION 2" />
 
       <main id="contenu">
         <slot />
@@ -93,13 +130,14 @@ const game = GAMES.find((g) => current.startsWith(g.href));
       <footer class="bg-chrome mt-[96px] md:rounded-tl-[32px]">
         <div class="mx-auto flex max-w-[1374px] flex-col items-center gap-[28px] px-[20px] pt-[72px] pb-[40px] text-center md:px-[24px]">
           <nav aria-label="Pied de page" class="flex flex-wrap justify-center gap-x-[40px] gap-y-[8px] text-[12px] leading-[18px] text-[#95989b]">
-            <a href="/aion2/guides/" class="hover:text-white">Tous les guides</a>
-            <a href="/aion2/guides/annuaire-ressources/" class="hover:text-white">Sources et ressources</a>
-            <a href="/aion2/serveurs/" class="hover:text-white">Serveurs EU</a>
+            <a href="/guides/" class="hover:text-white">Tous les guides</a>
+            <a href="/guides/annuaire-ressources/" class="hover:text-white">Sources et ressources</a>
+            <a href="/serveurs/" class="hover:text-white">Serveurs EU</a>
             <a href="/sitemap-index.xml" class="hover:text-white">Plan du site</a>
           </nav>
           <div class="flex flex-col gap-[4px] text-[12px] leading-[18px] text-[#737373]">
             <p>Atreia est un site de fans, non affilié aux éditeurs. AION 2 et ses marques appartiennent à NCSoft.</p>
+            <p>Images d'AION 2 : © NC Corporation. All Rights Reserved.</p>
             <p>Chaque guide est daté et cite ses sources. Vérifie les annonces officielles avant de dépenser.</p>
           </div>
         </div>

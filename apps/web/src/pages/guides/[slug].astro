@@ -5,6 +5,7 @@ import ClassSigil from "@/components/ClassSigil.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import GameHero from "@/components/GameHero.astro";
 import Grade from "@/components/Grade.astro";
+import Picture from "@/components/Picture.astro";
 import Base from "@/layouts/Base.astro";
 import { toMeta } from "@/lib/guides";
 import { catColor } from "@/lib/cats";
@@ -21,12 +22,28 @@ const { entry } = Astro.props;
 const guide = toMeta(entry);
 const { Content, headings } = await render(entry);
 const toc = headings.filter((h) => h.depth === 2);
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const article = {
+  "@type": "Article",
+  "@id": `${url}#article`,
+  headline: guide.title,
+  description: guide.summary,
+  inLanguage: "fr-FR",
+  dateModified: guide.updated,
+  mainEntityOfPage: url,
+  isPartOf: { "@id": new URL("/#site", Astro.site).href },
+  author: { "@type": "Organization", name: "Atreia", url: new URL("/", Astro.site).href },
+  publisher: { "@type": "Organization", name: "Atreia" },
+  about: { "@id": new URL("/#game", Astro.site).href },
+  keywords: guide.tags.join(", "),
+  ...(guide.cover && { image: new URL(guide.cover.src, Astro.site).href }),
+};
 ---
-<Base title={guide.title} description={guide.summary}>
+<Base title={guide.title} description={guide.summary} image={guide.cover} type="article" modified={guide.updated} jsonLd={[article]}>
   <div class="mx-auto max-w-[1374px] md:px-[24px]">
     <GameHero name="AION 2" compact />
     <div class="mt-[20px]">
-      <Breadcrumb items={[{ label: "AION 2", href: "/aion2/" }, { label: "Guides", href: "/aion2/guides/" }, { label: guide.title }]} />
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Guides", href: "/guides/" }, { label: guide.title }]} />
     </div>
 
     <!-- Relevé maxroll.gg : colonne gauche 210 px (auteur + sommaire collant), contenu 1030 px, écart 16 px. -->
@@ -66,6 +83,13 @@ const toc = headings.filter((h) => h.depth === 2);
 
       <article class="flex min-w-0 flex-col gap-[24px]">
         <h1 class="text-[26px] leading-[34px] font-semibold text-[#e8e8e8] md:text-[32px] md:leading-[40px]">{guide.title}</h1>
+
+        {guide.cover && (
+          <figure class="overflow-hidden rounded-[8px] shadow-[inset_0_0_1px_0_#2b2c2c]">
+            <Picture src={guide.cover.src} alt={guide.cover.alt} eager class="aspect-[21/9] w-full object-cover" />
+            <figcaption class="bg-[#121212] px-[12px] py-[6px] text-[12px] leading-[16px] text-[#737373]">{guide.cover.alt} · © NC Corporation</figcaption>
+          </figure>
+        )}
 
         <!-- Bloc d'en-tête : infos à gauche, actions au centre, « L'essentiel » à la place de l'encart pub. -->
         <div class="grid gap-[8px] xl:grid-cols-[minmax(0,1fr)_300px]">

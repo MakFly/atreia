@@ -1,13 +1,13 @@
 ---
 // Titre de section, relevé maxroll.gg : pastille d'icône 22 px + h2 32/700 en capitales, interligne 25 px.
 import type { LucideIcon } from "lucide-react";
-interface Props { icon: LucideIcon; title: string; subtitle?: string; color?: string; id?: string }
-const { icon: Icon, title, subtitle, color = "#ff772f", id } = Astro.props;
+interface Props { icon: LucideIcon; title: string; subtitle?: string; color?: string; id?: string; as?: "h1" | "h2" }
+const { icon: Icon, title, subtitle, color = "#ff772f", id, as: Heading = "h2" } = Astro.props;
 ---
 <div class="flex flex-wrap items-center gap-x-[12px] gap-y-[6px]">
   <span class="flex size-[22px] shrink-0 items-center justify-center rounded-[4px]" style={`background:${color}`} aria-hidden="true">
     <Icon className="size-[14px] text-white" strokeWidth={2.5} />
   </span>
-  <h2 id={id} class="text-[26px] leading-[25px] font-bold text-white uppercase md:text-[32px]">{title}</h2>
+  <Heading id={id} class="text-[26px] leading-[25px] font-bold text-white uppercase md:text-[32px]">{title}</Heading>
   {subtitle && <p class="text-[16px] leading-[20px] text-[#e8e8e8]">{subtitle}</p>}
 </div>

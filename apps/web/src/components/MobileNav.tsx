@@ -1,14 +1,11 @@
-import { ChevronDownIcon, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
-import { useState } from "react";
-import type { Game } from "@/lib/games";
 import { resolveHref } from "@/lib/links";
 import type { NavLink } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-/** Menu mobile plein écran, relevé maxroll.gg : Accueil puis accordéon « Jeux ». */
-export default function MobileNav({ games, links, current }: { games: readonly Game[]; links: NavLink[]; current: string }) {
-  const [openGame, setOpenGame] = useState<string | null>(games.find((g) => current.startsWith(g.href))?.slug ?? null);
+/** Menu mobile plein écran : choix de faction puis les rubriques AION 2. */
+export default function MobileNav({ links, current }: { links: NavLink[]; current: string }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger className="flex size-[44px] items-center justify-center text-white md:hidden" aria-label="Ouvrir le menu">
@@ -32,29 +29,14 @@ export default function MobileNav({ games, links, current }: { games: readonly G
             ))}
           </div>
           <nav aria-label="Menu" className="pb-[32px]">
-            <a href={resolveHref("/")} className={cn("block border-b border-white/10 px-[20px] py-[14px] text-[17px] font-semibold", current === "/" ? "text-white" : "text-white/75")}>Accueil</a>
-            <p className="px-[20px] pt-[18px] pb-[6px] text-[12px] font-semibold tracking-[0.08em] text-white/45 uppercase">Jeux</p>
-            {games.map((g) => {
-              const expanded = openGame === g.slug;
-              return (
-                <div key={g.slug} className="border-b border-white/10">
-                  <button type="button" aria-expanded={expanded} onClick={() => setOpenGame(expanded ? null : g.slug)}
-                    className="flex w-full items-center justify-between px-[20px] py-[14px] text-left text-[17px] font-semibold">
-                    {g.name}
-                    <ChevronDownIcon className={cn("size-[18px] transition-transform", expanded && "rotate-180")} />
-                  </button>
-                  {expanded && (
-                    <ul className="pb-[8px]">
-                      {links.map((l) => (
-                        <li key={l.href}>
-                          <a href={resolveHref(l.href)} className={cn("block px-[32px] py-[10px] text-[15px]", l.href === current ? "text-primary font-semibold" : "text-white/70")}>{l.label}</a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              );
-            })}
+            <ul>
+              {links.map((l) => (
+                <li key={l.href} className="border-b border-white/10">
+                  <a href={resolveHref(l.href)} aria-current={l.href === current ? "page" : undefined}
+                    className={cn("block px-[20px] py-[14px] text-[17px] font-semibold", l.href === current ? "text-primary" : "text-white/75")}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
           </nav>
         </Dialog.Content>
       </Dialog.Portal>

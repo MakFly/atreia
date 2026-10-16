@@ -28,4 +28,13 @@ describe("API", () => {
     expect((await app.request("/api/guides/inconnu")).status).toBe(404);
     expect((await app.request("/api/guides/..%2Fetc")).status).toBe(404);
   });
+
+  it("redirige l'ancien préfixe /aion2 vers la racine en 301, sans sortir du site", async () => {
+    const at = async (path: string) => (await app.request(path)).headers.get("location");
+    expect((await app.request("/aion2/guides/farm-kinah/")).status).toBe(301);
+    expect(await at("/aion2/guides/farm-kinah/?ref=x")).toBe("/guides/farm-kinah/?ref=x");
+    expect(await at("/aion2")).toBe("/");
+    expect(await at("/aion2/")).toBe("/");
+    expect(await at("/aion2//evil.example/")).toBe("/evil.example/");
+  });
 });

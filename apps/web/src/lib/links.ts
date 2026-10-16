@@ -1,5 +1,5 @@
 /**
- * Résout un chemin interne ("/aion2/guides/x/") côté client.
+ * Résout un chemin interne ("/guides/x/") côté client.
  * <html data-root data-index> vaut "/" et "" en prod ; l'export d'aperçu les réécrit en chemins relatifs.
  */
 export function resolveHref(path: string): string {

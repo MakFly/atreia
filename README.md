@@ -48,7 +48,7 @@ cons: ["Point faible"]
 
 Si tu modifies le schéma dans `packages/shared`, lance `pnpm --filter @aion2/web clean` : Astro garde un cache du contenu.
 
-Le frontmatter est validé par le même schéma zod (`packages/shared`) au build Astro et au démarrage du serveur : un guide invalide casse le build, jamais la prod. Les liens internes s'écrivent `/aion2/guides/<slug>/` ou `/aion2/serveurs/` : chaque jeu vit sous son propre préfixe (`src/lib/games.ts`).
+Le frontmatter est validé par le même schéma zod (`packages/shared`) au build Astro et au démarrage du serveur : un guide invalide casse le build, jamais la prod. Le site est dédié à AION 2 : les liens internes s'écrivent `/guides/<slug>/`, `/classes/` ou `/serveurs/`. Les anciennes URL `/aion2/...` redirigent en 301 vers la racine.
 
 ## API
 

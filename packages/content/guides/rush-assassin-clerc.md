@@ -24,6 +24,9 @@ cons:
   - "Peu d'AoE : farm solo et élites plus lents"
   - "Peu de PV, doit rester dans le dos de la cible"
   - "Sensible au ping au-delà de 150 ms"
+cover:
+  src: "/assets/steam-screenshot-09.jpg"
+  alt: "Une combattante déchaîne ses lames sur un groupe d'ennemis"
 ---
 
 > Guide compilé le 16/10/2026 pour la version **globale / EU**. Sources datées en bas de chaque section. Les builds « méta » viennent souvent des top joueurs **coréens** (un an d'avance) : le client global diffère sur certains nœuds et options, donc vérifie dans le planificateur [GuildOrder (UI FR)](https://guildorder.com/fr/games/aion2/tools/daevanion) ou sur [MetaBot (FR)](https://metabot.gg/en/aion-2) avant de dépenser.
@@ -40,7 +43,7 @@ cons:
 
 ## 1. Avant de commencer
 
-- **Serveur** : prends un serveur du lancement F2P, pas un serveur de l'accès anticipé (voir [l'état des lieux](/aion2/guides/etat-des-lieux-octobre-2026/)). Le main et l'alt doivent être sur le même serveur.
+- **Serveur** : prends un serveur du lancement F2P, pas un serveur de l'accès anticipé (voir [l'état des lieux](/guides/etat-des-lieux-octobre-2026/)). Le main et l'alt doivent être sur le même serveur.
 - **Faction** : les deux routes se valent pour le leveling. Choisis selon ta légion ou tes amis.
 - **Réglages Assassin** : désactive le *Skill Queue* et règle l'indicateur d'orientation du boss sur « Back » (dos). Tes dégâts dépendent de ta position dans le dos de la cible.
 - **Leveling au clavier** : prépare la macro Assassin (§3.5) dès le niveau 20.
@@ -195,6 +198,8 @@ Sources : [Aion 2 Meta, Assassin (MAJ 12/10/2026)](https://aion2-meta.com/guides
 Sources : [PlayNews (FR), puissance de combat (11/08/2026, données KR)](https://www.playnews.gg/guides/aion-2-augmenter-puissance-de-combat-ordre-investissement) · [KeenGamer (03/10/2026)](https://www.keengamer.com/articles/guides/aion-2-leveling-progression-guide-level-1-to-endgame/) · [Neonsect, Duties niveau 45 (07/10/2026)](https://neonsect.com/aion-2/aion-2-level-45-duties/)
 
 ## 5. Le healer : Clerc
+
+![Une Daeva en tenue blanche, bâton à la main, dans une prairie (© NC Corporation)](/assets/steam-screenshot-12.jpg)
 
 **Confirmé** : le Clerc est le healer principal d'AION 2 (masse, soins de zone, boucliers, purification, résurrection), classé S en PvE de groupe. Le **Chantre** est un support hybride : il buffe et soigne un peu, mais il ne remplace pas le Clerc en donjon (déduit des guides de classes, pas d'un guide qui le dit explicitement).
 

@@ -9,6 +9,9 @@ highlights:
   - "AION 2 n'a aucune API publique."
   - "Les sites de prix tiers ne disent pas d'où viennent leurs données."
   - "La voie sans risque : des prix saisis par les joueurs."
+cover:
+  src: "/assets/steam-screenshot-03.jpg"
+  alt: "Une cité gothique sous un ciel orangé"
 ---
 
 ## Pas d'API publique

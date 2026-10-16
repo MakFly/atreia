@@ -5,6 +5,9 @@ category: bien-demarrer
 updated: 2026-10-16
 status: a-venir
 order: 1
+cover:
+  src: "/assets/steam-screenshot-11.jpg"
+  alt: "L'éditeur de personnage d'AION 2"
 ---
 
 ## Ce guide arrive bientôt
@@ -15,4 +18,4 @@ On y regroupera :
 - les réglages à faire avant la première session ;
 - un plan pour la première semaine.
 
-En attendant, l'essentiel est déjà dans [l'état des lieux d'octobre](/aion2/guides/etat-des-lieux-octobre-2026/) et dans la page [Serveurs EU](/aion2/serveurs/).
+En attendant, l'essentiel est déjà dans [l'état des lieux d'octobre](/guides/etat-des-lieux-octobre-2026/) et dans la page [Serveurs EU](/serveurs/).

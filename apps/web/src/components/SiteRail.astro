@@ -1,8 +1,7 @@
 ---
-// Rail fixe à gauche (≥ md), relevé maxroll.gg : 96 px, noir, logo puis accueil, catalogue et pastilles de jeux de 40 px.
-import { Gamepad2Icon, HouseIcon } from "lucide-react";
+// Rail fixe à gauche (≥ md), relevé maxroll.gg : 96 px, noir, logo puis accueil, guides et pastille AION 2 de 40 px.
+import { BookOpenTextIcon, HouseIcon } from "lucide-react";
 import Logo from "@/components/Logo.astro";
-import { GAMES } from "@/lib/games";
 interface Props { current: string }
 const { current } = Astro.props;
 ---
@@ -10,29 +9,23 @@ const { current } = Astro.props;
   <a href="/" class="mt-[12px] flex size-[48px] items-center justify-center" aria-label="Atreia, accueil">
     <Logo class="size-[40px]" />
   </a>
-  <nav class="mt-[42px] flex flex-col items-center gap-[14px]" aria-label="Accueil et jeux">
+  <nav class="mt-[42px] flex flex-col items-center gap-[14px]" aria-label="Accueil et guides">
     <a href="/" title="Accueil" aria-current={current === "/" ? "page" : undefined}
       class:list={["flex size-[48px] items-center justify-center rounded-[12px] transition-colors", current === "/" ? "text-white" : "text-[#95989b] hover:text-white"]}>
       <HouseIcon className="size-[24px]" strokeWidth={1.5} />
       <span class="sr-only">Accueil</span>
     </a>
-    <a href="/#jeux" title="Tous les jeux" class="flex size-[48px] items-center justify-center rounded-[12px] text-[#95989b] transition-colors hover:text-white">
-      <Gamepad2Icon className="size-[24px]" strokeWidth={1.5} />
-      <span class="sr-only">Tous les jeux</span>
+    <a href="/guides/" title="Tous les guides" aria-current={current === "/guides/" ? "page" : undefined}
+      class:list={["flex size-[48px] items-center justify-center rounded-[12px] transition-colors", current === "/guides/" ? "text-white" : "text-[#95989b] hover:text-white"]}>
+      <BookOpenTextIcon className="size-[24px]" strokeWidth={1.5} />
+      <span class="sr-only">Tous les guides</span>
     </a>
     <span class="mt-[2px] h-px w-[40px] bg-[#2b2c2c]" aria-hidden="true"></span>
-    {GAMES.map((g) => {
-      const active = current.startsWith(g.href);
-      return (
-        <a href={g.href} title={g.name} aria-current={active ? "page" : undefined}
-          class:list={[
-            "flex size-[40px] items-center justify-center rounded-full border-2 bg-[#121212] transition-[border-color,box-shadow] duration-150",
-            active ? "border-[#057af0] shadow-[0_0_10px_3px_rgba(5,122,240,0.45)]" : "border-[#2b2c2c] hover:border-[#5c5c5c]",
-          ]}>
-          <Logo class="size-[24px]" />
-          <span class="sr-only">{g.name}</span>
-        </a>
-      );
-    })}
+    <!-- Pastille du jeu : le site est dédié à AION 2, elle reste allumée. -->
+    <a href="/" title="AION 2"
+      class="flex size-[40px] items-center justify-center rounded-full border-2 border-[#057af0] bg-[#121212] shadow-[0_0_10px_3px_rgba(5,122,240,0.45)]">
+      <Logo class="size-[24px]" />
+      <span class="sr-only">AION 2</span>
+    </a>
   </nav>
 </aside>

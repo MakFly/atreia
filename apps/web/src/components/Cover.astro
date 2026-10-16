@@ -1,23 +1,30 @@
 ---
 import type { Category } from "@aion2/shared/browser";
+import Picture from "@/components/Picture.astro";
 import { BookOpenIcon, CoinsIcon, CompassIcon, NewspaperIcon, SwordsIcon } from "lucide-react";
-interface Props { category: Category; class?: string; big?: boolean; tiny?: boolean }
-const { category, class: className, big = false, tiny = false } = Astro.props;
+interface Props { category: Category; image?: { src: string; alt: string } | undefined; class?: string; big?: boolean; tiny?: boolean }
+const { category, image, class: className, big = false, tiny = false } = Astro.props;
 const ICONS = { actu: NewspaperIcon, "bien-demarrer": CompassIcon, classes: SwordsIcon, kinah: CoinsIcon, ressources: BookOpenIcon };
 const Icon = ICONS[category];
 const color = `var(--cat-${category})`;
 ---
-<!-- Vignette générée (pas d'illustration officielle) : couleur de rubrique, motif et icône -->
+<!-- Illustration du guide si elle existe, sinon vignette générée : couleur de rubrique, motif et icône -->
 <div class:list={["relative overflow-hidden", className]}
   style={`background: radial-gradient(120% 90% at 85% 15%, color-mix(in oklch, ${color} 55%, transparent), transparent 60%), linear-gradient(160deg, color-mix(in oklch, ${color} 30%, var(--hero-ink, #15161a)), oklch(0.15 0.008 265))`}>
-  <svg class="absolute inset-0 size-full opacity-[0.12]" aria-hidden="true">
-    <defs>
-      <pattern id={`p-${category}`} width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
-        <path d="M0 11h22" stroke="white" stroke-width="1" />
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill={`url(#p-${category})`} />
-  </svg>
-  <Icon className={big ? "absolute right-6 bottom-4 size-28 text-white/25" : tiny ? "absolute inset-0 m-auto size-[26px] text-white/45" : "absolute right-3 bottom-2 size-14 text-white/25"} strokeWidth={1.25} aria-hidden="true" />
+  {image ? (
+    <Picture src={image.src} alt={image.alt} class="absolute inset-0 size-full object-cover" />
+  ) : (
+    <>
+      <svg class="absolute inset-0 size-full opacity-[0.12]" aria-hidden="true">
+        <defs>
+          <pattern id={`p-${category}`} width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+            <path d="M0 11h22" stroke="white" stroke-width="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill={`url(#p-${category})`} />
+      </svg>
+      <Icon className={big ? "absolute right-6 bottom-4 size-28 text-white/25" : tiny ? "absolute inset-0 m-auto size-[26px] text-white/45" : "absolute right-3 bottom-2 size-14 text-white/25"} strokeWidth={1.25} aria-hidden="true" />
+    </>
+  )}
   <slot />
 </div>
