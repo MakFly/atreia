@@ -1,4 +1,5 @@
 // @ts-check
+import { unified } from "@astrojs/markdown-remark";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
@@ -22,6 +23,6 @@ export default defineConfig({
   },
   integrations: [react(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith("/aion2/") })],
   
-  markdown: { rehypePlugins: [rehypeImages] },
+  markdown: { processor: unified({ rehypePlugins: [rehypeImages] }) },
   vite: { plugins: [tailwindcss()] },
 });
