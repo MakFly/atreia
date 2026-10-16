@@ -23,4 +23,4 @@ export async function guidesByCategory(): Promise<{ key: Category; label: string
   }));
 }
 
-export const guideHref = (slug: string) => `/aion2/guides/${slug}/`;
+export const guideHref = (slug: string) => `/guides/${slug}/`;

@@ -6,7 +6,7 @@ interface Props { current: string; name: string }
 const { current, name } = Astro.props;
 // Un guide sans entrée dédiée allume l'onglet « Guides », comme « Build Guides » sur la référence.
 const exact = MAIN_NAV.some((l) => isActive(l.href, current));
-const active = (href: string) => isActive(href, current) || (!exact && href === "/aion2/guides/" && current.startsWith(href));
+const active = (href: string) => isActive(href, current) || (!exact && href === "/guides/" && current.startsWith(href));
 ---
 <div class="sticky top-[60px] z-[100] border-b border-[#1c1c1c] bg-[#0a0a0a] md:top-0">
   <nav aria-label={`Navigation ${name}`} class="no-scrollbar flex h-[59px] items-stretch overflow-x-auto px-[6px] md:justify-center md:px-[24px]">

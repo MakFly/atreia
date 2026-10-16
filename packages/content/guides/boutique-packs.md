@@ -9,6 +9,9 @@ highlights:
   - "Les Founder's Packs ne sont plus en vente depuis le 5 octobre."
   - "L'abonnement à 14,99 $ est la seule offre indispensable : il permet de vendre."
   - "Évite le Daeva Pass Planet's Call, qui se termine le 28 octobre."
+cover:
+  src: "/images/official-halloween-2026-costumes.jpg"
+  alt: "Les costumes d'Halloween 2026 de la boutique"
 ---
 
 ## Les packs fondateurs ne sont plus en vente

@@ -5,10 +5,13 @@ import Breadcrumb from "@/components/Breadcrumb.astro";
 import ClassSigil from "@/components/ClassSigil.astro";
 import GameHero from "@/components/GameHero.astro";
 import Grade from "@/components/Grade.astro";
-import HeroArt from "@/components/HeroArt.astro";
+import Picture from "@/components/Picture.astro";
 import SectionTitle from "@/components/SectionTitle.astro";
 import Base from "@/layouts/Base.astro";
 import { formatDate } from "@/lib/utils";
+
+// Décor derrière chaque sceau de classe : des scènes du jeu, pas des illustrations de la classe.
+const SCENES = ["01", "02", "03", "04", "06", "07", "10", "13"].map((n) => `/images/steam-screenshot-${n}.jpg`);
 
 const COLS = [
   { key: "pve", label: "PvE" },
@@ -21,26 +24,26 @@ const COLS = [
   <div class="mx-auto max-w-[1374px] md:px-[24px]">
     <GameHero name="AION 2" compact />
     <div class="mt-[20px]">
-      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "AION 2", href: "/aion2/" }, { label: "Tier list" }]} />
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Tier list" }]} />
     </div>
 
     <!-- Relevé maxroll.gg (tier lists) : titre sur panneau illustré, cartes 2 colonnes image + titre 18/600, h 100. -->
     <section class="relative isolate mt-[24px] overflow-hidden px-[20px] pt-[32px]">
-      <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><HeroArt /></div>
-      <SectionTitle icon={ChartNoAxesColumnIncreasingIcon} title="Tier list des classes" color="#ff772f" />
+      <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><Picture src="/images/steam-screenshot-08.jpg" alt="" class="size-full object-cover" /></div>
+      <SectionTitle as="h1" icon={ChartNoAxesColumnIncreasingIcon} title="Tier list des classes" color="#ff772f" />
       <p class="mt-[12px] max-w-[640px] text-[16px] leading-[24px] text-[#95989b]">
         Une note n'apparaît que si une source fiable la donne pour la version globale. Pas de tier list inventée : les autres classes restent en « – ».
       </p>
       <ul class="mt-[24px] grid gap-[8px] sm:grid-cols-2 xl:grid-cols-3">
-        {CLASS_KEYS.map((key) => {
+        {CLASS_KEYS.map((key, i) => {
           const c = CLASSES[key];
-          const href = "guide" in c ? `/aion2/guides/${c.guide}/` : undefined;
+          const href = "guide" in c ? `/guides/${c.guide}/` : undefined;
           const Tag = href ? "a" : "div";
           return (
             <li>
               <Tag href={href} class:list={["group flex h-[100px] items-center overflow-hidden rounded-[8px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c,0_0_1px_0_#2b2c2c] transition-shadow duration-150", href && "hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c]"]}>
                 <div class="relative h-full w-[170px] shrink-0 overflow-hidden">
-                  <HeroArt />
+                  <Picture src={SCENES[i % SCENES.length]!} alt="" class="absolute inset-0 size-full object-cover opacity-70" />
                   <ClassSigil cls={key} class="absolute inset-0 m-auto size-[64px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]" />
                   <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_55%,#121212)]"></div>
                 </div>
@@ -90,7 +93,7 @@ const COLS = [
                   ))}
                   <td class="px-[16px] py-[10px]">
                     {"guide" in c
-                      ? <a href={`/aion2/guides/${c.guide}/`} class="font-semibold text-[#057af0] hover:underline">Lire le guide</a>
+                      ? <a href={`/guides/${c.guide}/`} class="font-semibold text-[#057af0] hover:underline">Lire le guide</a>
                       : <span class="text-[#737373]">À venir</span>}
                   </td>
                 </tr>

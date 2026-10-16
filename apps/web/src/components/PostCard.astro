@@ -12,7 +12,7 @@ const { guide: g, large = false } = Astro.props;
 <a href={guideHref(g.slug)}
   class="group flex h-full flex-col overflow-hidden rounded-[12px] bg-[#121212] shadow-[inset_0_0_1px_0_#1c1c1c,0_0_1px_0_#1c1c1c] transition-shadow duration-150 hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c]">
   <div class="relative aspect-[16/9] overflow-hidden rounded-t-[12px]">
-    <Cover category={g.category} class="size-full transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]" />
+    <Cover category={g.category} image={g.cover} class="size-full transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]" />
     <span class="absolute top-[12px] left-[12px] flex h-[24px] items-center gap-[6px] rounded-[4px] bg-black/75 px-[8px] text-[12px] leading-[14px] font-semibold text-white uppercase">
       <span class="size-[8px] rounded-[2px]" style={`background:${catColor(g.category)}`} aria-hidden="true"></span>{CAT_TAG[g.category]}
     </span>

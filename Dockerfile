@@ -1,17 +1,19 @@
 # syntax=docker/dockerfile:1.7
 # Image unique : le serveur Hono sert l'API et le front buildé.
 
-FROM node:22-alpine AS build
+FROM oven/bun:1.4.0 AS build
 WORKDIR /repo
-RUN corepack enable
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
+COPY package.json bun.lock tsconfig.base.json ./
 COPY apps/web/package.json apps/web/
 COPY apps/server/package.json apps/server/
 COPY packages/shared/package.json packages/shared/
 COPY packages/content/package.json packages/content/
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=atreia-bun,target=/root/.bun/install/cache bun install --frozen-lockfile
 COPY . .
-RUN pnpm typecheck && pnpm test && pnpm build
+# URL publique obligatoire via Compose, vide par défaut pour les appels directs.
+ARG SITE_URL=
+ENV SITE_URL=${SITE_URL}
+RUN bun run typecheck && bun run test && bun run build
 
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production PORT=8787 \

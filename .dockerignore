@@ -3,3 +3,8 @@
 **/dist-preview
 .git
 .env
+.run
+.astro
+apps/web/.astro
+*.log
+.claude

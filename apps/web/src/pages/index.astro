@@ -1,91 +1,83 @@
 ---
-import { ArrowUpRightIcon, ChevronRightIcon } from "lucide-react";
-import Cover from "@/components/Cover.astro";
-import HeroArt from "@/components/HeroArt.astro";
+import { EU_FACTS } from "@aion2/shared/browser";
+import { ArrowUpRightIcon, MapPinnedIcon, NewspaperIcon, SparklesIcon } from "lucide-react";
+import GameHero from "@/components/GameHero.astro";
+import Picture from "@/components/Picture.astro";
+import HotTopics from "@/components/HotTopics.astro";
 import Logo from "@/components/Logo.astro";
+import NewsRow from "@/components/NewsRow.astro";
+import PostCard from "@/components/PostCard.astro";
+import SectionTitle from "@/components/SectionTitle.astro";
 import Base from "@/layouts/Base.astro";
-import { GAMES } from "@/lib/games";
-import { allGuides, guideHref } from "@/lib/guides";
+import { allGuides } from "@/lib/guides";
 import { formatDate } from "@/lib/utils";
 
-const published = (await allGuides()).filter((g) => g.status === "publie").toSorted((a, b) => b.updated.localeCompare(a.updated));
-const side = published.slice(0, 4);
-const game = GAMES[0]!;
+const byDate = (await allGuides()).toSorted((a, b) => b.updated.localeCompare(a.updated));
+const published = byDate.filter((g) => g.status === "publie");
+const seasonal = published.slice(0, 5);
+const fresh = published.slice(0, 3);
 ---
-<Base title="Accueil" description="Atreia : guides de jeux en français. AION 2 pour commencer : builds, tier list, serveurs EU et Kinah.">
-  <!-- Bandeau d'accueil, relevé maxroll.gg : 160 px, « Welcome to » 28 px léger + nom en gras, illustration estompée. -->
-  <section class="relative isolate flex h-[120px] items-center overflow-hidden px-[20px] md:h-[160px] md:px-[36px]">
-    <div class="absolute inset-0 -z-10 opacity-60 [mask-image:linear-gradient(to_bottom,black_40%,transparent)]"><HeroArt /></div>
-    <p class="text-[24px] leading-[32px] font-light text-[#e8e8e8] md:text-[28px]">Bienvenue sur <span class="font-bold text-white">Atreia</span></p>
-  </section>
+<Base title="AION 2" description="Guides AION 2 en français pour les serveurs européens : bien démarrer, builds, tier list des classes, serveurs et Kinah.">
+  <div class="mx-auto max-w-[1374px] md:px-[24px]">
+    <GameHero name="AION 2"
+      description="Guides AION 2 en français : bien démarrer, builds de classes, tier list, serveurs européens, farm de Kinah et marché." />
 
-  <div class="mx-auto max-w-[1374px] px-[20px] md:px-[24px]">
-    <section id="jeux" class="mt-[40px] scroll-mt-[90px]" aria-labelledby="t-jeux">
-      <div class="flex items-center justify-between border-b border-[#2b2c2c] pb-[14px]">
-        <h2 id="t-jeux" class="flex items-center gap-[8px] text-[18px] leading-[24px] font-semibold text-white uppercase">
-          <span class="size-[12px] rounded-[2px] bg-[#057af0]" aria-hidden="true"></span>Jeux
-        </h2>
-        <a href={game.href} aria-label={`Voir ${game.name}`} class="text-[#95989b] hover:text-white"><ChevronRightIcon className="size-[18px]" /></a>
-      </div>
+    <div class="px-[12px] md:px-[12px]">
+      <HotTopics guides={byDate} />
 
-      <!-- Relevé : grande carte à gauche (≈ 716 × 404) et grille 2 × 2 de cartes (≈ 272 × 193), écart 16 px, radius 12. -->
-      <div class="mt-[24px] grid gap-[16px] lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-        <a href={game.href} class="group relative isolate flex min-h-[320px] flex-col justify-end overflow-hidden rounded-[12px] p-[20px] shadow-[inset_0_0_1px_0_#2b2c2c] lg:min-h-[404px]">
-          <div class="absolute inset-0 -z-10 transition-transform duration-[250ms] ease-out group-hover:scale-[1.03]"><HeroArt /></div>
-          <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(0,0,0,0.85),transparent_60%)]"></div>
-          <Logo class="size-[64px]" />
-          <p class="font-display mt-[12px] text-[34px] leading-[38px] font-semibold tracking-wide text-white uppercase">{game.name}</p>
-          <p class="mt-[6px] max-w-[460px] text-[16px] leading-[24px] text-[#dadada]">{game.tagline}</p>
-          <span class="mt-[14px] inline-flex w-fit items-center gap-[6px] rounded-[8px] bg-[#057af0] px-[14px] py-[6px] text-[16px] font-semibold text-white">Voir les guides <ArrowUpRightIcon className="size-[16px]" /></span>
-        </a>
-        <ul class="grid gap-[16px] sm:grid-cols-2">
-          {side.map((g) => (
-            <li>
-              <a href={guideHref(g.slug)} class="group relative isolate flex h-[193px] flex-col justify-end overflow-hidden rounded-[12px] p-[12px] shadow-[inset_0_0_1px_0_#2b2c2c]">
-                <div class="absolute inset-0 -z-10 transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]"><Cover category={g.category} class="size-full" /></div>
-                <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(0,0,0,0.9),transparent_70%)]"></div>
-                <p class="text-[16px] leading-[20px] font-bold text-white">{g.title}</p>
-                <p class="mt-[6px] text-[11px] leading-[14px] text-[#95989b]">par <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {formatDate(g.updated)}</p>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-
-    <div class="mt-[56px] grid gap-[32px] lg:grid-cols-[minmax(0,1fr)_300px]">
-      <section aria-labelledby="t-actus">
-        <h2 id="t-actus" class="flex items-center gap-[8px] border-b border-[#2b2c2c] pb-[14px] text-[18px] leading-[24px] font-semibold text-white uppercase">
-          <span class="size-[12px] rounded-[2px] bg-[#057af0]" aria-hidden="true"></span>Dernières actus
-        </h2>
-        <!-- Relevé : vignette 320 × 180 (affichée à 50 %), rubrique bleue 11 px, titre 22/700, extrait 2 lignes, filet entre les lignes. -->
-        <ul class="divide-y divide-[#1c1c1c]">
-          {published.map((g) => (
-            <li>
-              <a href={guideHref(g.slug)} class="group flex flex-col gap-[16px] py-[24px] sm:flex-row">
-                <Cover category={g.category} class="aspect-[16/9] w-full shrink-0 rounded-[8px] sm:h-[180px] sm:w-[320px]" />
-                <div class="flex min-w-0 flex-1 flex-col">
-                  <p class="flex items-center gap-[6px] text-[11px] leading-[16px] font-semibold text-[#057af0] uppercase">{game.name} <ArrowUpRightIcon className="size-[12px]" /></p>
-                  <h3 class="mt-[10px] text-[22px] leading-[28px] font-bold text-white group-hover:underline group-hover:underline-offset-4">{g.title}</h3>
-                  <p class="mt-[6px] line-clamp-2 text-[16px] leading-[22px] text-[#95989b]">{g.summary}</p>
-                  <p class="mt-auto pt-[12px] text-[11px] leading-[16px] text-[#737373]">par <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {formatDate(g.updated)}</p>
-                </div>
-              </a>
-            </li>
+      <!-- Articles de la saison : panneau illustré, titre centré (relevé : 36/900) et 5 cartes verticales. -->
+      <section class="relative isolate mt-[56px] overflow-hidden rounded-[12px] px-[12px] pt-[32px] pb-[16px] md:px-[16px]" aria-labelledby="saison">
+        <div class="absolute inset-0 -z-10 opacity-50 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"><Picture src="/images/steam-screenshot-10.jpg" alt="" class="size-full object-cover" /></div>
+        <div class="flex items-center justify-center gap-[12px] text-center">
+          <Logo class="size-[48px]" />
+          <div class="text-left">
+            <h2 id="saison" class="text-[26px] leading-[30px] font-black text-[#e8e8e8] uppercase md:text-[36px] md:leading-[36px]">Guides de la saison</h2>
+            <p class="text-[14px] leading-[18px] text-[#e8e8e8]">Les articles pour bien vivre la Saison 1 globale.</p>
+          </div>
+        </div>
+        <ul class="no-scrollbar mt-[24px] flex snap-x gap-[8px] overflow-x-auto pb-[4px]">
+          {seasonal.map((g) => (
+            <li class="w-[248px] shrink-0 snap-start xl:w-auto xl:flex-1"><PostCard guide={g} /></li>
           ))}
         </ul>
       </section>
 
-      <aside class="flex flex-col gap-[16px]">
-        <div class="rounded-[8px] bg-[#121212] p-[16px] text-center shadow-[inset_0_0_1px_0_#2b2c2c]">
-          <p class="text-[14px] leading-[20px] font-semibold text-white uppercase">Raccourcis AION 2</p>
-          <ul class="mt-[12px] flex flex-col gap-[6px] text-left text-[14px]">
-            {[["/aion2/classes/", "Tier list des classes"], ["/aion2/serveurs/", "Serveurs européens"], ["/aion2/guides/annuaire-ressources/", "Annuaire des ressources"]].map(([href, label]) => (
-              <li><a href={href} class="flex items-center justify-between rounded-[6px] bg-[#171717] px-[12px] py-[8px] text-[#dadada] shadow-[inset_0_0_1px_0_#2b2c2c] hover:text-white">{label}<ChevronRightIcon className="size-[14px] text-[#737373]" /></a></li>
+      <section class="mt-[56px]" aria-labelledby="nouveautes">
+        <SectionTitle id="nouveautes" icon={SparklesIcon} title="Nouveautés" subtitle="Nos dernières mises à jour." color="#d4c400" />
+        <ul class="mt-[24px] grid gap-[12px] md:grid-cols-3">
+          {fresh.map((g) => <li><PostCard guide={g} large /></li>)}
+        </ul>
+        <p class="mt-[12px] text-right">
+          <a href="/guides/" class="inline-flex items-center gap-[4px] text-[14px] text-[#95989b] hover:text-white">Tous les guides <ArrowUpRightIcon className="size-[14px]" /></a>
+        </p>
+      </section>
+
+      <!-- Emplacement du sondage sur la référence : ici, les repères EU datés et sourcés. -->
+      <section class="relative isolate mt-[48px] grid overflow-hidden rounded-[12px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c] md:grid-cols-[260px_1fr]" aria-labelledby="reperes">
+        <div class="relative hidden md:block"><Picture src="/images/steam-screenshot-13.jpg" alt="" class="absolute inset-0 size-full object-cover" /><div class="absolute inset-0 flex items-center justify-center bg-black/30"><Logo class="size-[96px]" /></div></div>
+        <div class="p-[20px] md:p-[24px]">
+          <h2 id="reperes" class="flex items-center gap-[10px] text-[24px] leading-[28px] font-bold text-white uppercase">
+            <MapPinnedIcon className="size-[22px] text-[#057af0]" /> Repères EU
+          </h2>
+          <p class="mt-[4px] text-[16px] text-[#e8e8e8]">Ce qu'il faut savoir avant de choisir ton serveur.</p>
+          <dl class="mt-[16px] grid gap-[8px] sm:grid-cols-2 xl:grid-cols-3">
+            {EU_FACTS.map((f) => (
+              <div class="flex flex-col rounded-[6px] bg-[#171717] px-[12px] py-[8px] shadow-[inset_0_0_1px_0_#2b2c2c]">
+                <dt class="text-[13px] leading-[18px] text-[#95989b]">{f.label}</dt>
+                <dd class="text-[16px] leading-[22px] font-semibold text-white">{f.value}</dd>
+                <dd><a href={f.source.url} target="_blank" rel="noopener noreferrer" class="text-[12px] leading-[16px] text-[#737373] hover:text-white hover:underline">{f.source.name}, {formatDate(f.asOf)}</a></dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         </div>
-      </aside>
+      </section>
+
+      <section class="mt-[56px]" aria-labelledby="actus">
+        <SectionTitle id="actus" icon={NewspaperIcon} title="Dernières actus" subtitle="Ce qui bouge en ce moment." color="#057af0" />
+        <ul class="mt-[24px] flex flex-col gap-[8px]">
+          {published.map((g) => <li><NewsRow guide={g} /></li>)}
+        </ul>
+      </section>
     </div>
   </div>
 </Base>

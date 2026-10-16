@@ -1,24 +1,27 @@
 ---
 // Bandeau du jeu, relevé maxroll.gg : 1296 × 284 (176 + bandeau saison), padding 10/60, logo 72 px + titre 24/700,
 // description 16/24 #95989b sur 400 px max. Version compacte (guides, tier list) : 188 px, sans description ni saison.
-import HeroArt from "@/components/HeroArt.astro";
 import Logo from "@/components/Logo.astro";
+import Picture from "@/components/Picture.astro";
 interface Props { name: string; description?: string; compact?: boolean }
 const { name, description, compact = false } = Astro.props;
 const LAUNCH = "2026-10-05";
+const Heading = compact ? "p" : "h1";
 ---
 <section class:list={["relative isolate overflow-hidden", compact ? "md:h-[188px]" : "md:h-[284px]"]} aria-label={name}>
-  <div class="absolute inset-0 -z-10 opacity-90 [mask-image:linear-gradient(to_bottom,black_55%,transparent)]">
-    <HeroArt />
+  <!-- Fond de la fiche Steam d'AION 2 (© NC Corporation), assombri à gauche pour le titre. -->
+  <div class="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black_55%,transparent)]">
+    <Picture src="/images/steam-background.jpg" alt="" eager class="size-full object-cover object-[center_40%] opacity-80" />
+    <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.75),rgba(0,0,0,0.2)_60%,transparent)]"></div>
   </div>
   <div class:list={[
     "flex flex-col items-center gap-[12px] px-[20px] pt-[24px] pb-[20px] text-center md:items-start md:px-[60px] md:py-[10px] md:text-left",
     compact ? "md:h-[156px] md:justify-center" : "md:h-[176px] md:justify-center",
   ]}>
-    <h1 class="flex items-center gap-[12px] text-[24px] leading-[30px] font-bold text-white uppercase">
+    <Heading class="flex items-center gap-[12px] text-[24px] leading-[30px] font-bold text-white uppercase">
       <Logo class="size-[64px] drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] md:size-[72px]" />
       {name}
-    </h1>
+    </Heading>
     {!compact && description && <p class="max-w-[400px] text-[16px] leading-[24px] text-[#95989b] md:text-[#c9c9c9]">{description}</p>}
   </div>
   {!compact && (

@@ -11,14 +11,14 @@ import { guidesByCategory } from "@/lib/guides";
 
 const groups = await guidesByCategory();
 ---
-<Base title="Tous les guides" description="Tous les guides AION 2 en français, rangés par rubrique.">
+<Base title="Tous les guides" description="Tous les guides AION 2 en français, rangés par rubrique : bien démarrer, classes et builds, Kinah, ressources et actualités.">
   <div class="mx-auto max-w-[1374px] md:px-[24px]">
     <GameHero name="AION 2" compact />
     <div class="mt-[20px]">
-      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "AION 2", href: "/aion2/" }, { label: "Guides" }]} />
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Guides" }]} />
     </div>
     <div class="mt-[32px] px-[20px]">
-      <SectionTitle icon={BookOpenTextIcon} title="Tous les guides" color="#057af0" />
+      <SectionTitle as="h1" icon={BookOpenTextIcon} title="Tous les guides" color="#057af0" />
       <nav aria-label="Rubriques" class="mt-[20px] flex flex-wrap gap-[8px]">
         {groups.map((g) => (
           <a href={`#${g.key}`} class="flex h-[32px] items-center gap-[10px] rounded-[8px] bg-[#121212] px-[12px] text-[16px] font-semibold text-[#95989b] uppercase shadow-[inset_0_0_0_1px_#2b2c2c] hover:text-white">

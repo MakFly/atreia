@@ -34,6 +34,15 @@ export function createApi(deps: { env: Env; log: Logger; guides: GuideStore }) {
     if (c.res.ok) c.header("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
   });
 
+  // Ancien préfixe du portail multi-jeux : redirection permanente vers la racine, query string conservée.
+  // Les barres obliques de tête sont fusionnées : "/aion2//x.com" ne doit pas devenir une URL externe.
+  api.get("/aion2/*", (c) => {
+    const url = new URL(c.req.url);
+    const path = `/${url.pathname.replace(/^\/aion2\/*/, "")}`;
+    return c.redirect(`${path}${url.search}`, 301);
+  });
+  api.get("/aion2", (c) => c.redirect("/", 301));
+
   // Liveness : le process répond. Readiness : le contenu est chargé.
   api.get("/health", (c) => c.json({ status: "ok" }));
   api.get("/ready", (c) =>

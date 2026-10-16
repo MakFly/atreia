@@ -27,6 +27,8 @@ export const guideFrontmatterSchema = z.object({
   cons: z.array(z.string()).default([]),
   /** Version du jeu couverte, affichée dans le bandeau */
   patch: z.string().default("Saison 1 globale"),
+  /** Illustration de vignette et d'en-tête, servie depuis apps/web/public (sources dans images/manifest.json) */
+  cover: z.object({ src: z.string().startsWith("/"), alt: z.string().min(1) }).optional(),
 });
 
 const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
