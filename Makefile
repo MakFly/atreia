@@ -46,7 +46,7 @@ dev: ## Start Astro (web) and Hono (api) in the background on free ports
 	echo $$web > $(RUN_DIR)/web.port; echo $$api > $(RUN_DIR)/api.port; \
 	printf "$(C_OK)[make] web  http://127.0.0.1:$$web/$(C_RESET)\n"; \
 	printf "$(C_OK)[make] api  http://127.0.0.1:$$api/$(C_RESET)\n"; \
-	printf "[make] logs $(RUN_DIR)/web.log $(RUN_DIR)/api.log (make logs)\n"
+	printf "$(C_OK)[make] logs $(RUN_DIR)/web.log $(RUN_DIR)/api.log (make logs)$(C_RESET)\n"
 
 .PHONY: stop
 stop: ## Stop the dev servers started by make dev
