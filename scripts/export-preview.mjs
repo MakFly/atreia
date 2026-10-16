@@ -3,6 +3,7 @@
 import { cp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { rewriteHtmlPaths } from "./rewrite-paths.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const src = join(root, "apps/web/dist");
@@ -19,19 +20,11 @@ async function* walk(dir) {
   }
 }
 
-const ATTR = /\b(href|src|component-url|renderer-url|before-hydration-url)="\/([^"]*)"/g;
-
 for await (const file of walk(out)) {
   const rel = relative(dirname(file), out).split(sep).join("/");
   const prefix = rel === "" ? "./" : `${rel}/`;
   if (file.endsWith(".html")) {
-    let html = await readFile(file, "utf8");
-    html = html.replace(ATTR, (_m, attr, path) => {
-      const [p, hash = ""] = path.split("#");
-      const target = p === "" || p.endsWith("/") ? `${p}index.html` : p;
-      return `${attr}="${prefix}${target}${hash ? `#${hash}` : ""}"`;
-    });
-    html = html.replace('data-root="/" data-index=""', `data-root="${prefix}" data-index="index.html"`);
+    const html = rewriteHtmlPaths(await readFile(file, "utf8"), prefix);
     await writeFile(file, html);
   } else if (file.endsWith(".css")) {
     // Les CSS sont dans assets/ : url(/assets/x) devient url(x).

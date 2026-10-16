@@ -16,6 +16,6 @@
     "start": "bun --filter @aion2/server start",
     "build:preview": "bun --filter @aion2/web build && bun scripts/export-preview.mjs",
     "typecheck": "bun --filter '*' typecheck",
-    "test": "bun --filter '*' test"
+    "test": "bun --filter '*' test && bun test scripts/"
   }
 }
