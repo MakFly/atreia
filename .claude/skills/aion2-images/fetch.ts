@@ -50,9 +50,21 @@ const { positionals, values } = parseArgs({
 const limit = Number(values.limit);
 
 async function getJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, { headers: { "User-Agent": "atreia-image-skill/1.0" } });
-  if (!res.ok) throw new Error(`${res.status} ${url}`);
-  return (await res.json()) as T;
+  let res: Response;
+  try {
+    res = await fetch(url, { headers: { "User-Agent": "atreia-image-skill/1.0" } });
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(`Échec réseau pour ${url} : ${reason}`);
+  }
+  if (!res.ok) throw new Error(`Erreur HTTP ${res.status} pour ${url}`);
+
+  const body = await res.text();
+  try {
+    return JSON.parse(body) as T;
+  } catch {
+    throw new Error(`Réponse non JSON pour ${url} (HTTP ${res.status})`);
+  }
 }
 
 async function official(): Promise<Image[]> {
@@ -63,6 +75,9 @@ async function official(): Promise<Image[]> {
     const list = await getJson<{ contentList: any[] }>(
       `${COMMUNITY_API}/board/${board}_${lang}/article?size=${limit}`,
     );
+    if (!Array.isArray(list?.contentList)) {
+      throw new Error(`Réponse invalide pour le board ${board}_${lang} : contentList absent ou invalide`);
+    }
     for (const item of list.contentList) {
       const detail = await getJson<any>(`${COMMUNITY_API}/board/${board}_${lang}/article/${item.id}`);
       const pattern: string | undefined = detail.article?.categoryBoard?.boardUrlPattern;
@@ -88,9 +103,12 @@ async function official(): Promise<Image[]> {
 }
 
 async function steam(): Promise<Image[]> {
-  const data = (await getJson<any>(`https://store.steampowered.com/api/appdetails?appids=${STEAM_APP_ID}`))[
-    STEAM_APP_ID
-  ].data;
+  const response = await getJson<any>(`https://store.steampowered.com/api/appdetails?appids=${STEAM_APP_ID}`);
+  const app = response?.[STEAM_APP_ID];
+  if (app?.success !== true || !app.data || typeof app.data !== "object") {
+    throw new Error(`Steam n'a pas retourné les données de l'application ${STEAM_APP_ID}`);
+  }
+  const data = app.data;
   const page = `https://store.steampowered.com/app/${STEAM_APP_ID}/`;
   const base = { source: "steam" as const, page, license: NC_LICENSE, credit: NC_CREDIT };
   const out: Image[] = [
