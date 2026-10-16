@@ -1,0 +1,42 @@
+---
+// Faction en JS natif (le site est sombre uniquement, comme la référence) : pas de React chargé pour deux boutons.
+---
+<div class="flex items-center gap-1.5" data-prefs>
+  <div role="radiogroup" aria-label="Faction" class="bg-muted/70 hidden rounded-md border p-0.5 text-sm sm:flex">
+    <button type="button" role="radio" data-faction-btn="elyos"
+      class="rounded-[5px] px-2.5 py-1 font-medium text-muted-foreground transition-colors hover:text-foreground aria-checked:bg-primary aria-checked:text-primary-foreground">
+      Elyos
+    </button>
+    <button type="button" role="radio" data-faction-btn="asmodien"
+      class="rounded-[5px] px-2.5 py-1 font-medium text-muted-foreground transition-colors hover:text-foreground aria-checked:bg-primary aria-checked:text-primary-foreground">
+      Asmodiens
+    </button>
+  </div>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const save = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* stockage bloqué */ } };
+
+  function sync() {
+    document.querySelectorAll<HTMLButtonElement>("[data-faction-btn]").forEach((b) => {
+      const on = b.dataset.factionBtn === root.dataset.faction;
+      b.setAttribute("aria-checked", String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+  }
+
+  // Les boutons du menu mobile apparaissent plus tard : on resynchronise à chaque ouverture.
+  new MutationObserver(sync).observe(document.body, { childList: true });
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    const f = target.closest<HTMLButtonElement>("[data-faction-btn]");
+    if (f?.dataset.factionBtn) {
+      root.dataset.faction = f.dataset.factionBtn;
+      save("atreia-faction", f.dataset.factionBtn);
+      sync();
+    }
+  });
+  sync();
+</script>

@@ -1,0 +1,41 @@
+---
+// Bandeau du jeu, relevé maxroll.gg : 1296 × 284 (176 + bandeau saison), padding 10/60, logo 72 px + titre 24/700,
+// description 16/24 #95989b sur 400 px max. Version compacte (guides, tier list) : 188 px, sans description ni saison.
+import HeroArt from "@/components/HeroArt.astro";
+import Logo from "@/components/Logo.astro";
+interface Props { name: string; description?: string; compact?: boolean }
+const { name, description, compact = false } = Astro.props;
+const LAUNCH = "2026-10-05";
+---
+<section class:list={["relative isolate overflow-hidden", compact ? "md:h-[188px]" : "md:h-[284px]"]} aria-label={name}>
+  <div class="absolute inset-0 -z-10 opacity-90 [mask-image:linear-gradient(to_bottom,black_55%,transparent)]">
+    <HeroArt />
+  </div>
+  <div class:list={[
+    "flex flex-col items-center gap-[12px] px-[20px] pt-[24px] pb-[20px] text-center md:items-start md:px-[60px] md:py-[10px] md:text-left",
+    compact ? "md:h-[156px] md:justify-center" : "md:h-[176px] md:justify-center",
+  ]}>
+    <h1 class="flex items-center gap-[12px] text-[24px] leading-[30px] font-bold text-white uppercase">
+      <Logo class="size-[64px] drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] md:size-[72px]" />
+      {name}
+    </h1>
+    {!compact && description && <p class="max-w-[400px] text-[16px] leading-[24px] text-[#95989b] md:text-[#c9c9c9]">{description}</p>}
+  </div>
+  {!compact && (
+    <div class="mx-auto mt-[8px] flex h-[42px] max-w-[760px] items-center justify-center gap-[18px] border-y border-white/10 bg-[linear-gradient(90deg,transparent,rgba(0,0,0,0.55)_20%,rgba(0,0,0,0.55)_80%,transparent)] md:mt-[48px]">
+      <span class="font-display text-[15px] tracking-[0.12em] text-[#d9b45f] uppercase">Atreia</span>
+      <div class="flex flex-col items-center leading-none">
+        <span class="text-[11px] leading-[14px] font-semibold text-white uppercase">Saison 1 globale</span>
+        <span class="text-[18px] leading-[22px] font-bold text-white" data-since={LAUNCH}>Lancée le 5 octobre 2026</span>
+      </div>
+    </div>
+  )}
+</section>
+
+<script>
+  // Le site est statique : le compteur « en cours depuis » se calcule chez le lecteur.
+  for (const el of document.querySelectorAll<HTMLElement>("[data-since]")) {
+    const days = Math.floor((Date.now() - Date.parse(`${el.dataset.since}T00:00:00Z`)) / 86_400_000);
+    if (days >= 1) el.innerHTML = `En cours depuis <span class="text-[22px]">${days}</span> jour${days > 1 ? "s" : ""}`;
+  }
+</script>

@@ -1,0 +1,107 @@
+---
+import { CLASSES, CLASS_KEYS, ROLES } from "@aion2/shared/browser";
+import { ChartNoAxesColumnIncreasingIcon } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import ClassSigil from "@/components/ClassSigil.astro";
+import GameHero from "@/components/GameHero.astro";
+import Grade from "@/components/Grade.astro";
+import HeroArt from "@/components/HeroArt.astro";
+import SectionTitle from "@/components/SectionTitle.astro";
+import Base from "@/layouts/Base.astro";
+import { formatDate } from "@/lib/utils";
+
+const COLS = [
+  { key: "pve", label: "PvE" },
+  { key: "pvp", label: "PvP" },
+  { key: "farm", label: "Farm" },
+  { key: "debutant", label: "Prise en main" },
+] as const;
+---
+<Base title="Tier list des classes" description="Tier list des 8 classes d'AION 2 : rôle, arme, notes PvE, PvP et farm quand une source fiable existe, et guides disponibles.">
+  <div class="mx-auto max-w-[1374px] md:px-[24px]">
+    <GameHero name="AION 2" compact />
+    <div class="mt-[20px]">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "AION 2", href: "/aion2/" }, { label: "Tier list" }]} />
+    </div>
+
+    <!-- Relevé maxroll.gg (tier lists) : titre sur panneau illustré, cartes 2 colonnes image + titre 18/600, h 100. -->
+    <section class="relative isolate mt-[24px] overflow-hidden px-[20px] pt-[32px]">
+      <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><HeroArt /></div>
+      <SectionTitle icon={ChartNoAxesColumnIncreasingIcon} title="Tier list des classes" color="#ff772f" />
+      <p class="mt-[12px] max-w-[640px] text-[16px] leading-[24px] text-[#95989b]">
+        Une note n'apparaît que si une source fiable la donne pour la version globale. Pas de tier list inventée : les autres classes restent en « – ».
+      </p>
+      <ul class="mt-[24px] grid gap-[8px] sm:grid-cols-2 xl:grid-cols-3">
+        {CLASS_KEYS.map((key) => {
+          const c = CLASSES[key];
+          const href = "guide" in c ? `/aion2/guides/${c.guide}/` : undefined;
+          const Tag = href ? "a" : "div";
+          return (
+            <li>
+              <Tag href={href} class:list={["group flex h-[100px] items-center overflow-hidden rounded-[8px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c,0_0_1px_0_#2b2c2c] transition-shadow duration-150", href && "hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c]"]}>
+                <div class="relative h-full w-[170px] shrink-0 overflow-hidden">
+                  <HeroArt />
+                  <ClassSigil cls={key} class="absolute inset-0 m-auto size-[64px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]" />
+                  <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_55%,#121212)]"></div>
+                </div>
+                <div class="min-w-0 px-[16px]">
+                  <p class="text-[18px] leading-[27px] font-semibold text-white">{c.name}</p>
+                  <p class="text-[14px] leading-[20px] text-[#95989b]">{ROLES[c.role]} · {c.weapon}</p>
+                  {"grades" in c && <p class="mt-[4px] flex items-center gap-[6px] text-[12px] text-[#95989b]">PvE <Grade grade={c.grades.pve} /> PvP <Grade grade={c.grades.pvp} /></p>}
+                </div>
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section class="mt-[48px] px-[20px]" aria-labelledby="notes">
+      <h2 id="notes" class="border-l-[4px] border-[#f00505] pl-[10px] text-[22px] leading-[24px] font-semibold text-white uppercase">Notes par classe</h2>
+      <div class="mt-[20px] overflow-x-auto rounded-[8px] border border-[#5c1515] bg-[#121212]">
+        <table class="w-full min-w-[46rem] text-[14px] leading-[20px]">
+          <thead class="bg-[#171717] text-left text-white">
+            <tr>
+              <th class="px-[16px] py-[12px] font-semibold">Classe</th>
+              <th class="px-[16px] py-[12px] font-semibold">Rôle</th>
+              {COLS.map((c) => <th class="px-[12px] py-[12px] text-center font-semibold">{c.label}</th>)}
+              <th class="px-[16px] py-[12px] font-semibold">Guide</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#2b2c2c]">
+            {CLASS_KEYS.map((key) => {
+              const c = CLASSES[key];
+              return (
+                <tr class="transition-colors hover:bg-[#171717]">
+                  <td class="px-[16px] py-[10px]">
+                    <div class="flex items-center gap-[12px]">
+                      <ClassSigil cls={key} class="size-[40px] shrink-0" />
+                      <div>
+                        <p class="font-semibold text-white">{c.name}</p>
+                        <p class="text-[12px] text-[#95989b]">{c.weapon}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-[16px] py-[10px] text-[#95989b]">{ROLES[c.role]}</td>
+                  {COLS.map((col) => (
+                    <td class="px-[12px] py-[10px] text-center">
+                      {"grades" in c ? <Grade grade={c.grades[col.key]} /> : <span class="text-[#737373]" aria-label="Pas de note">–</span>}
+                    </td>
+                  ))}
+                  <td class="px-[16px] py-[10px]">
+                    {"guide" in c
+                      ? <a href={`/aion2/guides/${c.guide}/`} class="font-semibold text-[#057af0] hover:underline">Lire le guide</a>
+                      : <span class="text-[#737373]">À venir</span>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-[10px] text-[12px] text-[#737373]">
+        Notes Assassin : <a class="hover:text-white hover:underline" href={CLASSES.assassin.gradesSource.url} target="_blank" rel="noopener noreferrer">{CLASSES.assassin.gradesSource.name}</a>, {formatDate(CLASSES.assassin.gradesSource.asOf)}. Noms français des classes à confirmer sur le client global.
+      </p>
+    </section>
+  </div>
+</Base>

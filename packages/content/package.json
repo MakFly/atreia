@@ -1,0 +1,6 @@
+{
+  "name": "@aion2/content",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Guides AION 2 en Markdown (frontmatter YAML). Un fichier = un guide."
+}

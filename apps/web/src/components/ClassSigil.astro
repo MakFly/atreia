@@ -1,0 +1,14 @@
+---
+import { CLASSES, type ClassKey } from "@aion2/shared/browser";
+interface Props { cls: ClassKey; class?: string }
+const { cls, class: className } = Astro.props;
+const info = CLASSES[cls];
+// Pas d'assets officiels : un sceau hexagonal avec l'initiale, couleur selon le rôle.
+const ROLE_HUE = { tank: 245, "dps-melee": 25, "dps-distance": 80, soin: 150, soutien: 300 } as const;
+const hue = ROLE_HUE[info.role];
+---
+<svg viewBox="0 0 48 48" class={className} aria-hidden="true">
+  <path d="M24 2 43 13v22L24 46 5 35V13Z" fill={`oklch(0.3 0.06 ${hue})`} stroke={`oklch(0.7 0.14 ${hue})`} stroke-width="2" />
+  <path d="M24 8 38 16v16l-14 8-14-8V16Z" fill="none" stroke={`oklch(0.7 0.14 ${hue} / 0.35)`} stroke-width="1" />
+  <text x="24" y="30.5" text-anchor="middle" font-family="Oswald Variable, Oswald, sans-serif" font-weight="700" font-size="17" fill={`oklch(0.92 0.06 ${hue})`}>{info.name[0]}</text>
+</svg>

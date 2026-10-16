@@ -1,0 +1,69 @@
+---
+import { EU_SERVERS } from "@aion2/shared/browser";
+import { InfoIcon, ServerIcon } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import GameHero from "@/components/GameHero.astro";
+import SectionTitle from "@/components/SectionTitle.astro";
+import Base from "@/layouts/Base.astro";
+import { formatDate } from "@/lib/utils";
+
+const waves = [
+  { key: "f2p", title: "Ouverts au lancement F2P", text: "C'est ici qu'il faut créer ton perso si tu commences maintenant.", recommended: true },
+  { key: "anticipe", title: "Accès anticipé", text: "9 serveurs par faction, ouverts aux Founder's Packs avec 5 jours d'avance. Transferts possibles seulement vers d'autres serveurs de ce groupe. Liste partielle.", recommended: false },
+] as const;
+const factions = [
+  { key: "elyos", label: "Elyos" },
+  { key: "asmodien", label: "Asmodiens" },
+] as const;
+---
+<Base title="Serveurs EU" description="Liste des serveurs européens d'AION 2 par faction, et lesquels choisir pour commencer.">
+  <div class="mx-auto max-w-[1374px] md:px-[24px]">
+  <GameHero name="AION 2" compact />
+  <div class="mt-[20px]">
+    <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "AION 2", href: "/aion2/" }, { label: "Serveurs" }]} />
+  </div>
+  <div class="mt-[32px] px-[20px]">
+  <SectionTitle icon={ServerIcon} title="Serveurs européens" color="#057af0" />
+  <p class="mt-[12px] max-w-[720px] text-[16px] leading-[24px] text-[#95989b]">
+    Chaque serveur Elyos est apparié à un serveur Asmodien : c'est contre lui que tu te bats dans les failles et l'Abysse. Les donjons se font avec tous les serveurs EU, le marché reste limité à ton serveur.
+  </p>
+  <p class="mt-[16px] flex max-w-[720px] gap-[10px] rounded-[8px] bg-[#121212] p-[12px] text-[14px] leading-[20px] text-[#dadada] shadow-[inset_0_0_1px_0_#2b2c2c]">
+    <InfoIcon className="mt-[2px] size-[16px] shrink-0 text-[#057af0]" aria-hidden="true" />
+    <span>Relevé du {formatDate(EU_SERVERS.updated)}. {EU_SERVERS.note}</span>
+  </p>
+
+  <div class="mt-[40px] flex flex-col gap-[48px]">
+    {waves.map((w) => (
+      <section aria-labelledby={`w-${w.key}`}>
+        <div class="flex flex-wrap items-center gap-3">
+          <h2 id={`w-${w.key}`} class="border-l-[4px] border-[#057af0] pl-[10px] text-[22px] leading-[24px] font-semibold text-white uppercase">{w.title}</h2>
+          {w.recommended && <span class="rounded-[4px] bg-[#057af0] px-[8px] text-[12px] leading-[20px] font-semibold text-white uppercase">Recommandé</span>}
+        </div>
+        <p class="mt-[6px] max-w-[720px] text-[14px] leading-[20px] text-[#95989b]">{w.text}</p>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {factions.map((f) => (
+            <div class="rounded-[8px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c]" data-faction-card={f.key}>
+              <h3 class="flex items-center justify-between border-b border-[#2b2c2c] px-[16px] py-[12px] text-[18px] font-semibold text-white">
+                {f.label}
+                <span class="text-[12px] font-normal text-[#95989b] tabular-nums">{EU_SERVERS[w.key][f.key].length} serveurs</span>
+              </h3>
+              <ul class="grid grid-cols-2 gap-x-[16px] gap-y-[2px] p-[16px] text-[14px] text-[#dadada] sm:grid-cols-3">
+                {EU_SERVERS[w.key][f.key].map((name) => <li class="py-1">{name}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+  </div>
+  </div>
+</Base>
+
+<style>
+  /* La carte de ta faction ressort. */
+  :global(:root[data-faction="elyos"]) [data-faction-card="elyos"],
+  :global(:root[data-faction="asmodien"]) [data-faction-card="asmodien"] {
+    box-shadow: inset 0 0 0 1px var(--faction), 0 0 10px 1px color-mix(in oklch, var(--faction) 30%, transparent);
+  }
+</style>

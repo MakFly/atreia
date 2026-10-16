@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-preview
+*.log
+.env
+.env.*
+!.env.example
+.astro
+page.html
+apps/web/files.json

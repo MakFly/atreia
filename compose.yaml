@@ -1,0 +1,11 @@
+services:
+  atreia:
+    build: .
+    image: atreia:local
+    ports:
+      - "8787:8787"
+    environment:
+      LOG_LEVEL: info
+      CORS_ORIGINS: ""
+    read_only: true
+    restart: unless-stopped

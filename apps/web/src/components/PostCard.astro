@@ -1,0 +1,27 @@
+---
+// Carte d'article verticale, relevé maxroll.gg : radius 12, fond #121212, liseré 1 px #1c1c1c, image 16:9 arrondie en haut,
+// pastille de rubrique sur l'image, titre 18/600 (22,5), extrait 14 px #95989b sur 2 lignes, auteur et date en 12 px.
+import type { GuideMeta } from "@aion2/shared/browser";
+import Cover from "@/components/Cover.astro";
+import { CAT_TAG, catColor } from "@/lib/cats";
+import { guideHref } from "@/lib/guides";
+import { formatDate } from "@/lib/utils";
+interface Props { guide: GuideMeta; large?: boolean }
+const { guide: g, large = false } = Astro.props;
+---
+<a href={guideHref(g.slug)}
+  class="group flex h-full flex-col overflow-hidden rounded-[12px] bg-[#121212] shadow-[inset_0_0_1px_0_#1c1c1c,0_0_1px_0_#1c1c1c] transition-shadow duration-150 hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c]">
+  <div class="relative aspect-[16/9] overflow-hidden rounded-t-[12px]">
+    <Cover category={g.category} class="size-full transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]" />
+    <span class="absolute top-[12px] left-[12px] flex h-[24px] items-center gap-[6px] rounded-[4px] bg-black/75 px-[8px] text-[12px] leading-[14px] font-semibold text-white uppercase">
+      <span class="size-[8px] rounded-[2px]" style={`background:${catColor(g.category)}`} aria-hidden="true"></span>{CAT_TAG[g.category]}
+    </span>
+  </div>
+  <div class:list={["flex flex-1 flex-col", large ? "p-[16px]" : "p-[12px]"]}>
+    <h3 class:list={["font-semibold text-white", large ? "text-[20px] leading-[25px]" : "text-[18px] leading-[22.5px]"]}>{g.title}</h3>
+    <p class:list={["mt-[8px] text-[14px] leading-[20px] text-[#95989b]", large ? "line-clamp-2" : "line-clamp-2"]}>{g.summary}</p>
+    <p class="mt-auto pt-[10px] text-[12px] leading-[16px] text-[#737373]">
+      par <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {g.status === "a-venir" ? "en préparation" : formatDate(g.updated)}
+    </p>
+  </div>
+</a>

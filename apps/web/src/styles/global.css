@@ -1,0 +1,260 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Direction : portail de jeu, sombre par défaut. Fond « nuit de l'Abysse » (bleu ardoise, pas de noir pur),
+ * surfaces superposées, une seule couleur vive : celle de ta faction.
+ * Elyos = or de l'aube d'Elysea ; Asmodiens = braise d'Asmodae.
+ */
+:root {
+  --radius: 0.5rem;
+  /* clair */
+  --background: oklch(0.975 0.004 265);
+  --foreground: oklch(0.21 0.03 265);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.94 0.008 265);
+  --muted-foreground: oklch(0.5 0.03 265);
+  --secondary: oklch(0.94 0.008 265);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.93 0.012 265);
+  --accent-foreground: var(--foreground);
+  --border: oklch(0.88 0.012 265);
+  --input: oklch(0.88 0.012 265);
+  --destructive: oklch(0.58 0.22 27);
+  --warn: oklch(0.6 0.15 55);
+  --warn-surface: oklch(0.96 0.04 75);
+  /* Notes S/A/B/C, codes couleur de rareté */
+  --grade-s: oklch(0.62 0.2 32);
+  --grade-a: oklch(0.58 0.18 300);
+  --grade-b: oklch(0.56 0.14 245);
+  --grade-c: oklch(0.58 0.13 150);
+  /* Couleurs de rubrique (vignettes) */
+  --cat-actu: oklch(0.55 0.14 245);
+  --cat-bien-demarrer: oklch(0.56 0.13 160);
+  --cat-classes: oklch(0.56 0.18 25);
+  --cat-kinah: oklch(0.62 0.13 80);
+  --cat-ressources: oklch(0.55 0.15 300);
+  --hero-ink: oklch(0.14 0.01 265);
+}
+
+.dark {
+  /* Relevé maxroll.gg (1440 px, 2026-10-16), valeurs calculées. */
+  --background: #0a0a0a;
+  --chrome: #000000;
+  --foreground: #e8e8e8;
+  --strong: #ffffff;
+  --body: #dadada;
+  --card: #121212;
+  --card-foreground: #e8e8e8;
+  --elevated: #171717;
+  --popover: #171717;
+  --muted: #121212;
+  --muted-foreground: #95989b;
+  --dim: #737373;
+  --secondary: #171717;
+  --accent: #1c1c1c;
+  --border: #1c1c1c;
+  --border-strong: #2b2c2c;
+  --border-hover: #5c5c5c;
+  --input: #2b2c2c;
+  --blue: #057af0;
+  --destructive: #f00505;
+  --warn: #ffb547;
+  --warn-surface: #241c0f;
+  --grade-s: #ff772f;
+  --grade-a: #a666ff;
+  --grade-b: #057af0;
+  --grade-c: #6ab525;
+  /* Couleurs de rubrique, reprises des pastilles « Hot topics » */
+  --cat-actu: #ff772f;
+  --cat-bien-demarrer: #199f2f;
+  --cat-classes: #a666ff;
+  --cat-kinah: #ffb547;
+  --cat-ressources: #057af0;
+  /* Couleur du jeu (soulignement de la barre jeu) : or d'Atreia */
+  --game: #d9b45f;
+}
+
+:root[data-faction="elyos"] {
+  --faction: oklch(0.56 0.12 75);
+  --faction-soft: oklch(0.95 0.04 85);
+  --faction-foreground: oklch(0.99 0 0);
+}
+:root[data-faction="asmodien"] {
+  --faction: oklch(0.55 0.19 33);
+  --faction-soft: oklch(0.95 0.035 35);
+  --faction-foreground: oklch(0.99 0 0);
+}
+.dark[data-faction="elyos"] {
+  --faction: oklch(0.83 0.12 82);
+  --faction-soft: oklch(0.28 0.05 80);
+  --faction-foreground: oklch(0.2 0.03 80);
+}
+.dark[data-faction="asmodien"] {
+  --faction: oklch(0.72 0.16 38);
+  --faction-soft: oklch(0.28 0.06 35);
+  --faction-foreground: oklch(0.18 0.03 35);
+}
+:root {
+  --primary: var(--blue, #057af0);
+  --primary-foreground: #ffffff;
+  --ring: var(--blue, #057af0);
+}
+
+@theme inline {
+  --font-sans: "Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Oswald Variable", "Oswald", "Arial Narrow", sans-serif;
+  --radius-sm: calc(var(--radius) - 3px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-faction: var(--faction);
+  --color-chrome: var(--chrome);
+  --color-strong: var(--strong);
+  --color-body: var(--body);
+  --color-elevated: var(--elevated);
+  --color-dim: var(--dim);
+  --color-border-strong: var(--border-strong);
+  --color-border-hover: var(--border-hover);
+  --color-blue: var(--blue);
+  --color-game: var(--game);
+  --color-faction-soft: var(--faction-soft);
+  --color-warn: var(--warn);
+  --color-warn-surface: var(--warn-surface);
+  --color-grade-s: var(--grade-s);
+  --color-grade-a: var(--grade-a);
+  --color-grade-b: var(--grade-b);
+  --color-grade-c: var(--grade-c);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-padding-top: 76px;
+    color-scheme: dark;
+  }
+  @media (min-width: 768px) {
+    html { scroll-padding-top: 84px; }
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Corps des guides */
+/* Corps de guide, relevé maxroll.gg : 16/24 #dadada, intertitres Oswald 22 px bleus en capitales. */
+.prose-guide {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--body);
+}
+.prose-guide > * + * { margin-top: 14px; }
+.prose-guide h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 27.5px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-top: 48px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-strong);
+}
+.prose-guide h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22.5px;
+  color: var(--strong);
+  margin-top: 28px;
+}
+.prose-guide h2 + *, .prose-guide h3 + * { margin-top: 0.75rem; }
+.prose-guide a { color: var(--blue); transition: color 0.15s ease; }
+.prose-guide a:hover { color: #3f9bff; text-decoration: underline; text-underline-offset: 3px; }
+.prose-guide strong { font-weight: 600; color: var(--strong); }
+.prose-guide ul, .prose-guide ol { padding-left: 1.35rem; }
+.prose-guide ul { list-style: disc; }
+.prose-guide ol { list-style: decimal; }
+.prose-guide li + li { margin-top: 0.4rem; }
+.prose-guide li::marker { color: var(--muted-foreground); }
+.prose-guide blockquote {
+  background: var(--card);
+  border-left: 4px solid var(--warn);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.925rem;
+  color: var(--muted-foreground);
+}
+.prose-guide code {
+  font-size: 0.85em;
+  background: var(--muted);
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-sm);
+}
+.prose-guide hr { border-color: var(--border); margin: 2.5rem 0; }
+/* Le tableau défile seul sur mobile, la page jamais. */
+.prose-guide table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--card);
+}
+.prose-guide thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--strong);
+  background: var(--elevated);
+  white-space: nowrap;
+}
+.prose-guide th, .prose-guide td { padding: 0.55rem 0.8rem; vertical-align: top; }
+.prose-guide tbody tr { border-top: 1px solid var(--border-strong); }
+.prose-guide tbody tr:hover { background: var(--elevated); }
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}

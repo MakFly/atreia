@@ -1,0 +1,91 @@
+---
+import { ArrowUpRightIcon, ChevronRightIcon } from "lucide-react";
+import Cover from "@/components/Cover.astro";
+import HeroArt from "@/components/HeroArt.astro";
+import Logo from "@/components/Logo.astro";
+import Base from "@/layouts/Base.astro";
+import { GAMES } from "@/lib/games";
+import { allGuides, guideHref } from "@/lib/guides";
+import { formatDate } from "@/lib/utils";
+
+const published = (await allGuides()).filter((g) => g.status === "publie").toSorted((a, b) => b.updated.localeCompare(a.updated));
+const side = published.slice(0, 4);
+const game = GAMES[0]!;
+---
+<Base title="Accueil" description="Atreia : guides de jeux en français. AION 2 pour commencer : builds, tier list, serveurs EU et Kinah.">
+  <!-- Bandeau d'accueil, relevé maxroll.gg : 160 px, « Welcome to » 28 px léger + nom en gras, illustration estompée. -->
+  <section class="relative isolate flex h-[120px] items-center overflow-hidden px-[20px] md:h-[160px] md:px-[36px]">
+    <div class="absolute inset-0 -z-10 opacity-60 [mask-image:linear-gradient(to_bottom,black_40%,transparent)]"><HeroArt /></div>
+    <p class="text-[24px] leading-[32px] font-light text-[#e8e8e8] md:text-[28px]">Bienvenue sur <span class="font-bold text-white">Atreia</span></p>
+  </section>
+
+  <div class="mx-auto max-w-[1374px] px-[20px] md:px-[24px]">
+    <section id="jeux" class="mt-[40px] scroll-mt-[90px]" aria-labelledby="t-jeux">
+      <div class="flex items-center justify-between border-b border-[#2b2c2c] pb-[14px]">
+        <h2 id="t-jeux" class="flex items-center gap-[8px] text-[18px] leading-[24px] font-semibold text-white uppercase">
+          <span class="size-[12px] rounded-[2px] bg-[#057af0]" aria-hidden="true"></span>Jeux
+        </h2>
+        <a href={game.href} aria-label={`Voir ${game.name}`} class="text-[#95989b] hover:text-white"><ChevronRightIcon className="size-[18px]" /></a>
+      </div>
+
+      <!-- Relevé : grande carte à gauche (≈ 716 × 404) et grille 2 × 2 de cartes (≈ 272 × 193), écart 16 px, radius 12. -->
+      <div class="mt-[24px] grid gap-[16px] lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <a href={game.href} class="group relative isolate flex min-h-[320px] flex-col justify-end overflow-hidden rounded-[12px] p-[20px] shadow-[inset_0_0_1px_0_#2b2c2c] lg:min-h-[404px]">
+          <div class="absolute inset-0 -z-10 transition-transform duration-[250ms] ease-out group-hover:scale-[1.03]"><HeroArt /></div>
+          <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(0,0,0,0.85),transparent_60%)]"></div>
+          <Logo class="size-[64px]" />
+          <p class="font-display mt-[12px] text-[34px] leading-[38px] font-semibold tracking-wide text-white uppercase">{game.name}</p>
+          <p class="mt-[6px] max-w-[460px] text-[16px] leading-[24px] text-[#dadada]">{game.tagline}</p>
+          <span class="mt-[14px] inline-flex w-fit items-center gap-[6px] rounded-[8px] bg-[#057af0] px-[14px] py-[6px] text-[16px] font-semibold text-white">Voir les guides <ArrowUpRightIcon className="size-[16px]" /></span>
+        </a>
+        <ul class="grid gap-[16px] sm:grid-cols-2">
+          {side.map((g) => (
+            <li>
+              <a href={guideHref(g.slug)} class="group relative isolate flex h-[193px] flex-col justify-end overflow-hidden rounded-[12px] p-[12px] shadow-[inset_0_0_1px_0_#2b2c2c]">
+                <div class="absolute inset-0 -z-10 transition-transform duration-[250ms] ease-out group-hover:scale-[1.04]"><Cover category={g.category} class="size-full" /></div>
+                <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(0,0,0,0.9),transparent_70%)]"></div>
+                <p class="text-[16px] leading-[20px] font-bold text-white">{g.title}</p>
+                <p class="mt-[6px] text-[11px] leading-[14px] text-[#95989b]">par <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {formatDate(g.updated)}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <div class="mt-[56px] grid gap-[32px] lg:grid-cols-[minmax(0,1fr)_300px]">
+      <section aria-labelledby="t-actus">
+        <h2 id="t-actus" class="flex items-center gap-[8px] border-b border-[#2b2c2c] pb-[14px] text-[18px] leading-[24px] font-semibold text-white uppercase">
+          <span class="size-[12px] rounded-[2px] bg-[#057af0]" aria-hidden="true"></span>Dernières actus
+        </h2>
+        <!-- Relevé : vignette 320 × 180 (affichée à 50 %), rubrique bleue 11 px, titre 22/700, extrait 2 lignes, filet entre les lignes. -->
+        <ul class="divide-y divide-[#1c1c1c]">
+          {published.map((g) => (
+            <li>
+              <a href={guideHref(g.slug)} class="group flex flex-col gap-[16px] py-[24px] sm:flex-row">
+                <Cover category={g.category} class="aspect-[16/9] w-full shrink-0 rounded-[8px] sm:h-[180px] sm:w-[320px]" />
+                <div class="flex min-w-0 flex-1 flex-col">
+                  <p class="flex items-center gap-[6px] text-[11px] leading-[16px] font-semibold text-[#057af0] uppercase">{game.name} <ArrowUpRightIcon className="size-[12px]" /></p>
+                  <h3 class="mt-[10px] text-[22px] leading-[28px] font-bold text-white group-hover:underline group-hover:underline-offset-4">{g.title}</h3>
+                  <p class="mt-[6px] line-clamp-2 text-[16px] leading-[22px] text-[#95989b]">{g.summary}</p>
+                  <p class="mt-auto pt-[12px] text-[11px] leading-[16px] text-[#737373]">par <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {formatDate(g.updated)}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <aside class="flex flex-col gap-[16px]">
+        <div class="rounded-[8px] bg-[#121212] p-[16px] text-center shadow-[inset_0_0_1px_0_#2b2c2c]">
+          <p class="text-[14px] leading-[20px] font-semibold text-white uppercase">Raccourcis AION 2</p>
+          <ul class="mt-[12px] flex flex-col gap-[6px] text-left text-[14px]">
+            {[["/aion2/classes/", "Tier list des classes"], ["/aion2/serveurs/", "Serveurs européens"], ["/aion2/guides/annuaire-ressources/", "Annuaire des ressources"]].map(([href, label]) => (
+              <li><a href={href} class="flex items-center justify-between rounded-[6px] bg-[#171717] px-[12px] py-[8px] text-[#dadada] shadow-[inset_0_0_1px_0_#2b2c2c] hover:text-white">{label}<ChevronRightIcon className="size-[14px] text-[#737373]" /></a></li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,46 @@
+---
+// Illustration du bandeau : la Tour de l'Éternité brisée entre Elysea (en haut) et Asmodae (en bas).
+// Dessinée en SVG, sans asset du jeu. La lueur suit la couleur de faction.
+const stars = Array.from({ length: 70 }, (_, i) => {
+  const x = (i * 137.5) % 1200;
+  const y = (i * 61.8 * 3) % 420;
+  return { x, y, r: i % 7 === 0 ? 1.6 : 0.8, o: 0.25 + ((i * 13) % 50) / 100 };
+});
+---
+<svg viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 size-full" aria-hidden="true">
+  <defs>
+    <radialGradient id="glow" cx="72%" cy="48%" r="45%">
+      <stop offset="0%" stop-color="var(--faction)" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="var(--faction)" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="oklch(0.2 0.03 260)" />
+      <stop offset="100%" stop-color="oklch(0.13 0.01 265)" />
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="oklch(0.13 0.01 265)" stop-opacity="0.95" />
+      <stop offset="55%" stop-color="oklch(0.13 0.01 265)" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="oklch(0.13 0.01 265)" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#sky)" />
+  {stars.map((s) => <circle cx={s.x} cy={s.y} r={s.r} fill="white" opacity={s.o} />)}
+  <rect width="1200" height="420" fill="url(#glow)" />
+  <!-- Elysea -->
+  <path d="M640 0 H1200 V70 Q1080 110 980 92 Q900 128 820 96 Q740 120 680 84 Q650 60 640 0Z" fill="oklch(0.32 0.03 250)" opacity="0.9" />
+  <path d="M700 0 H1200 V40 Q1060 74 960 58 Q860 80 760 50Z" fill="oklch(0.42 0.04 240)" opacity="0.6" />
+  <!-- Asmodae -->
+  <path d="M600 420 H1200 V330 Q1090 300 1000 322 Q920 290 840 318 Q760 296 690 330 Q630 360 600 420Z" fill="oklch(0.22 0.03 330)" />
+  <!-- Tour de l'Éternité, brisée -->
+  <g fill="oklch(0.85 0.03 80)" opacity="0.9">
+    <path d="M858 96 L872 96 L876 178 L868 186 L862 176 L854 186Z" />
+    <path d="M852 236 L862 228 L868 240 L876 230 L882 330 L846 330Z" />
+  </g>
+  <!-- Éclats de l'Abysse -->
+  <g fill="oklch(0.8 0.05 80)" opacity="0.55">
+    <path d="M820 205 l9 -4 l3 8 l-10 3Z" /><path d="M905 214 l12 -3 l1 9 l-11 2Z" />
+    <path d="M770 228 l6 -2 l2 6 l-6 1Z" /><path d="M960 196 l7 0 l0 6 l-7 0Z" />
+    <path d="M1010 238 l9 -3 l2 7 l-9 2Z" /><path d="M720 190 l5 -1 l1 5 l-5 1Z" />
+  </g>
+  <rect width="1200" height="420" fill="url(#fade)" />
+</svg>

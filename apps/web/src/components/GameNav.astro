@@ -1,0 +1,32 @@
+---
+// Barre du jeu, relevé maxroll.gg : 59 px, liens centrés 18 px gris (#95989b) → blanc au survol,
+// séparateurs de 1 px, onglet actif en blanc gras souligné de la couleur du jeu.
+import { isActive, MAIN_NAV } from "@/lib/nav";
+interface Props { current: string; name: string }
+const { current, name } = Astro.props;
+// Un guide sans entrée dédiée allume l'onglet « Guides », comme « Build Guides » sur la référence.
+const exact = MAIN_NAV.some((l) => isActive(l.href, current));
+const active = (href: string) => isActive(href, current) || (!exact && href === "/aion2/guides/" && current.startsWith(href));
+---
+<div class="sticky top-[60px] z-[100] border-b border-[#1c1c1c] bg-[#0a0a0a] md:top-0">
+  <nav aria-label={`Navigation ${name}`} class="no-scrollbar flex h-[59px] items-stretch overflow-x-auto px-[6px] md:justify-center md:px-[24px]">
+    <ul class="flex items-stretch">
+      {MAIN_NAV.map((l, i) => {
+        const on = active(l.href);
+        return (
+          <li class="flex items-center">
+            {i > 0 && <span class="h-[16px] w-px bg-[#2b2c2c]" aria-hidden="true"></span>}
+            <a href={l.href} aria-current={on ? "page" : undefined}
+              class:list={[
+                "relative flex h-full items-center px-[16px] text-[18px] leading-[24px] whitespace-nowrap transition-colors duration-150",
+                on ? "font-semibold text-white" : "text-[#95989b] hover:text-white",
+              ]}>
+              {l.label}
+              {on && <span class="bg-game absolute inset-x-[12px] bottom-[8px] h-[3px] rounded-full" aria-hidden="true"></span>}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
+</div>

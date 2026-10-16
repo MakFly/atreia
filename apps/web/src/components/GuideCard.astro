@@ -1,0 +1,33 @@
+---
+import type { GuideMeta } from "@aion2/shared/browser";
+import { CATEGORIES } from "@aion2/shared/browser";
+import Cover from "@/components/Cover.astro";
+import { formatDate } from "@/lib/utils";
+interface Props { guide: GuideMeta; layout?: "card" | "row" }
+const { guide, layout = "card" } = Astro.props;
+const soon = guide.status === "a-venir";
+---
+{layout === "card" ? (
+  <a href={`/aion2/guides/${guide.slug}/`} class="group bg-card hover:border-primary/70 flex flex-col overflow-hidden rounded-lg border transition-colors">
+    <Cover category={guide.category} class="aspect-[16/7]">
+      <span class="absolute top-3 left-3 rounded bg-black/55 px-2 py-0.5 text-xs font-semibold text-white">{CATEGORIES[guide.category].label}</span>
+      {soon && <span class="absolute top-3 right-3 rounded bg-white/90 px-2 py-0.5 text-xs font-bold text-black">Bientôt</span>}
+    </Cover>
+    <div class="flex flex-1 flex-col p-4">
+      <h3 class="group-hover:text-primary font-bold leading-snug">{guide.title}</h3>
+      <p class="text-muted-foreground mt-1.5 line-clamp-2 text-sm leading-relaxed">{guide.summary}</p>
+      <p class="text-muted-foreground mt-auto pt-3 text-xs">
+        {soon ? "En préparation" : <>Mis à jour le <time datetime={guide.updated}>{formatDate(guide.updated)}</time></>}
+      </p>
+    </div>
+  </a>
+) : (
+  <a href={`/aion2/guides/${guide.slug}/`} class="group hover:bg-accent/60 flex gap-3 rounded-lg p-2 transition-colors">
+    <Cover category={guide.category} class="aspect-[4/3] w-24 shrink-0 rounded-md" />
+    <div class="min-w-0">
+      <p class="text-muted-foreground text-xs">{CATEGORIES[guide.category].label}</p>
+      <h3 class="group-hover:text-primary mt-0.5 text-sm font-bold leading-snug">{guide.title}</h3>
+      <p class="text-muted-foreground mt-1 text-xs">{soon ? "En préparation" : formatDate(guide.updated)}</p>
+    </div>
+  </a>
+)}

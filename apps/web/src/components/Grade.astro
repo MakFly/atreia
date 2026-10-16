@@ -1,0 +1,9 @@
+---
+import type { Grade } from "@aion2/shared/browser";
+interface Props { grade: Grade; size?: "sm" | "md" }
+const { grade, size = "sm" } = Astro.props;
+---
+<span
+  class:list={["inline-flex items-center justify-center rounded font-extrabold text-white tabular-nums", size === "sm" ? "size-6 text-xs" : "size-9 text-base"]}
+  style={`background: var(--grade-${grade.toLowerCase()})`}
+  aria-label={`Note ${grade}`}>{grade}</span>

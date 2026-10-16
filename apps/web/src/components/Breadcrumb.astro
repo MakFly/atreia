@@ -1,0 +1,16 @@
+---
+// Fil d'Ariane, relevé maxroll.gg : 14 px, liens #e8e8e8 600, page courante #95989b, filet bas #2b2c2c.
+import { ChevronRightIcon } from "lucide-react";
+interface Props { items: { label: string; href?: string }[] }
+const { items } = Astro.props;
+---
+<nav aria-label="Fil d'Ariane" class="mx-[20px] border-b border-[#2b2c2c] pb-[14px] md:mx-[20px]">
+  <ol class="flex flex-wrap items-center gap-x-[10px] gap-y-[4px] text-[14px] leading-[20px]">
+    {items.map((it, i) => (
+      <li class="flex items-center gap-[10px]">
+        {i > 0 && <ChevronRightIcon className="size-[14px] text-[#95989b]" aria-hidden="true" />}
+        {it.href ? <a href={it.href} class="font-semibold text-[#e8e8e8] hover:text-white">{it.label}</a> : <span class="text-[#95989b]" aria-current="page">{it.label}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
