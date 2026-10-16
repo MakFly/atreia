@@ -86,7 +86,7 @@ const article = {
 
         {guide.cover && (
           <figure class="overflow-hidden rounded-[8px] shadow-[inset_0_0_1px_0_#2b2c2c]">
-            <Picture src={guide.cover.src} alt={guide.cover.alt} eager class="aspect-[21/9] w-full object-cover" />
+            <Picture src={guide.cover.src} alt={guide.cover.alt} eager class="aspect-[21/9] max-h-[360px] w-full object-cover" />
             <figcaption class="bg-[#121212] px-[12px] py-[6px] text-[12px] leading-[16px] text-[#737373]">{guide.cover.alt} · © NC Corporation</figcaption>
           </figure>
         )}

@@ -44,7 +44,7 @@ tags: [assassin]
 order: 10                # tri dans la rubrique
 highlights:              # 3 à 5 points, affichés dans « L'essentiel »
   - "Premier point clé"
-cover:                  # optionnel : image de couverture
+cover:                   # optionnel : image de couverture
   src: "/images/assassin.jpg"
   alt: "Assassin dans AION 2"
 classes: [assassin]      # optionnel : sceaux de classe dans le bandeau
