@@ -15,15 +15,16 @@ site in production.
 
 ## Tooling rules
 
-- Bun is the only package manager and runner. Never use `npm`, `npx`,
-  `yarn` or `pnpm`. The lockfile is `bun.lock`.
+- Bun is the only package manager and runner. Do not use alternative
+  package managers or runners. The lockfile is `bun.lock`.
 - A single `bun install` at the repository root installs the root and every
   workspace (`apps/*`, `packages/*`). Workspaces depend on each other with
   `workspace:*`.
 - Run a script in one workspace with `bun --filter @aion2/<name> <script>`.
-- `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `Dockerfile` and `compose.yaml`
-  still target pnpm. Docker is on hold: do not edit or rely on them until the
-  Docker setup is migrated to Bun.
+- Docker installs and builds with Bun 1.4.0, matching `packageManager`.
+  Compose requires `SITE_URL` as a build argument for public URLs. The
+  runtime is Node 22, serving the bundled API and static site without
+  `node_modules`, as a non-root user with a read-only filesystem.
 
 ## Commands
 

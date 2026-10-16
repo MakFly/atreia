@@ -1,6 +1,9 @@
 services:
   atreia:
-    build: .
+    build:
+      context: .
+      args:
+        SITE_URL: "${SITE_URL:?Definir SITE_URL avec l'URL publique du site}"
     image: atreia:local
     ports:
       - "8787:8787"

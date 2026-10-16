@@ -27,7 +27,21 @@ make test        # lance les tests du serveur et de shared
 
 Les scripts racine restent disponibles avec `bun run typecheck` et `bun run test`. Pour cibler un workspace : `bun --filter @aion2/server test`.
 
-Docker est en attente de migration vers Bun : `Dockerfile`, `compose.yaml`, `pnpm-lock.yaml` et `pnpm-workspace.yaml` utilisent encore pnpm. Ne pas utiliser cette configuration pour le moment.
+## Docker
+
+Depuis la racine, avec Docker et Docker Compose installés :
+
+```bash
+SITE_URL=https://atreia.example docker compose up --build -d
+```
+
+Remplace `https://atreia.example` par le domaine public réel. Compose exige une valeur non vide pour `SITE_URL` et la transmet au build Astro : elle détermine les URL canoniques, Open Graph, `robots.txt` et le sitemap. Toute modification du domaine demande de reconstruire l'image. Dans le Dockerfile seul, l'argument `SITE_URL` vaut une chaîne vide par défaut : fournis explicitement `--build-arg SITE_URL=https://atreia.example` lors d'un build direct.
+
+Le build utilise l'image officielle `oven/bun:1.4.0`, installe les workspaces avec le lockfile figé, puis lance le contrôle des types, les tests et la compilation. L'image finale `node:22-alpine` contient uniquement le bundle Hono, le site statique et les guides, sans `node_modules`. Hono sert le tout sur `http://localhost:8787`, avec un utilisateur non-root, un contrôle de santé `/health` et un système de fichiers en lecture seule.
+
+```bash
+docker compose stop
+```
 
 ## Ajouter un guide
 
