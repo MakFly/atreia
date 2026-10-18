@@ -1,0 +1,9 @@
+---
+import GuideArticle from "@/views/GuideArticle.astro";
+import { getGuide } from "@/lib/guides";
+
+const slug = Astro.params.slug ?? "";
+const guide = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? await getGuide(slug, "fr") : undefined;
+if (!guide) return Astro.rewrite("/fr/404");
+---
+<GuideArticle guide={guide} locale="fr" />

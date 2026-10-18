@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@hono/node-server": "2.1.5",
-    "hono": "4.13.13"
+    "hono": "4.13.13",
+    "redis": "^6.3.0"
   },
   "devDependencies": {
+    "@aion2/content": "workspace:*",
     "@aion2/shared": "workspace:*",
     "@types/node": "26.6.5",
     "tsup": "9.0.0",

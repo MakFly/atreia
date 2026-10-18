@@ -5,6 +5,10 @@ description: Find and download official AION 2 images (NC news and update posts,
 
 # AION 2 images
 
+Article writing, research and video adaptation start with the `redacteur`
+agent (`.claude/agents/redacteur.md`). Open this skill only to acquire a new
+image. It owns the rights below, `fetch.ts` and the manifest fields.
+
 ## Goal
 
 Give the Atreia guides real AION 2 visuals whose origin and usage terms are

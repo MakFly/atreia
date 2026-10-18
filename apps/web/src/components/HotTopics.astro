@@ -5,46 +5,50 @@ import { CATEGORIES, type Category, type GuideMeta } from "@aion2/shared/browser
 import { FlameIcon, LayoutGridIcon } from "lucide-react";
 import Cover from "@/components/Cover.astro";
 import SectionTitle from "@/components/SectionTitle.astro";
-import { CAT_TAG, catColor } from "@/lib/cats";
+import { getCatTag, catColor } from "@/lib/cats";
 import { guideHref } from "@/lib/guides";
+import { getLocale, localizePath, ui } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils";
 interface Props { guides: GuideMeta[]; title?: string }
-const { guides, title = "Sujets chauds" } = Astro.props;
+const { guides, title } = Astro.props;
+const locale = getLocale(Astro.url.pathname);
+const labels = getCatTag(locale);
+const sectionTitle = title ?? ui(locale, "Hot topics", "Sujets chauds");
 const cats = (Object.keys(CATEGORIES) as Category[]).filter((c) => guides.some((g) => g.category === c));
 ---
 <section class="mt-[40px]" data-hot>
-  <SectionTitle icon={FlameIcon} title={title} color="#ff772f" />
+  <SectionTitle icon={FlameIcon} title={sectionTitle} color="#ff772f" />
 
-  <div class="mt-[24px] hidden flex-wrap gap-[12px] md:flex" role="group" aria-label="Filtrer par rubrique">
+  <div class="mt-[24px] hidden flex-wrap gap-[12px] md:flex" role="group" aria-label={ui(locale, "Filter by category", "Filtrer par rubrique")}>
     <button type="button" data-filter="all" aria-pressed="true"
       class="flex h-[32px] items-center gap-[10px] rounded-[8px] bg-[#121212] px-[12px] text-[16px] leading-[28px] font-semibold text-[#95989b] uppercase shadow-[inset_0_0_0_1px_#2b2c2c] transition-[color,box-shadow] duration-150 hover:text-white aria-pressed:text-white aria-pressed:shadow-[inset_0_0_0_1px_#057af0]">
-      <LayoutGridIcon className="size-[16px]" />Tout
+      <LayoutGridIcon className="size-[16px]" />{ui(locale, "All", "Tout")}
     </button>
     {cats.map((c) => (
       <button type="button" data-filter={c} aria-pressed="false"
         class="flex h-[32px] items-center gap-[10px] rounded-[8px] bg-[#121212] px-[12px] text-[16px] leading-[28px] font-semibold text-[#95989b] uppercase shadow-[inset_0_0_0_1px_#2b2c2c] transition-[color,box-shadow] duration-150 hover:text-white aria-pressed:text-white aria-pressed:shadow-[inset_0_0_0_1px_#057af0]">
-        <span class="size-[14px] rounded-[3px]" style={`background:${catColor(c)}`} aria-hidden="true"></span>{CAT_TAG[c]}
+        <span class="size-[14px] rounded-[3px]" style={`background:${catColor(c)}`} aria-hidden="true"></span>{labels[c]}
       </button>
     ))}
   </div>
   <label class="mt-[20px] block md:hidden">
-    <span class="sr-only">Filtrer par rubrique</span>
+    <span class="sr-only">{ui(locale, "Filter by category", "Filtrer par rubrique")}</span>
     <select data-filter-select class="h-[40px] w-full rounded-[8px] border border-[#2b2c2c] bg-[#121212] px-[12px] text-[16px] font-semibold text-white uppercase">
-      <option value="all">Tout</option>
-      {cats.map((c) => <option value={c}>{CAT_TAG[c]}</option>)}
+      <option value="all">{ui(locale, "All", "Tout")}</option>
+      {cats.map((c) => <option value={c}>{labels[c]}</option>)}
     </select>
   </label>
 
   <ul class="mt-[16px] grid gap-[10px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5" data-hot-list>
     {guides.map((g) => (
       <li data-cat={g.category}>
-        <a href={guideHref(g.slug)}
+        <a href={localizePath(guideHref(g.slug), locale)}
           class="group flex h-[70px] items-center gap-[12px] overflow-hidden rounded-[8px] border-l-[4px] bg-[#121212] py-[8px] pr-[10px] pl-[8px] shadow-[inset_0_0_1px_0_#1c1c1c,0_0_1px_0_#1c1c1c] transition-[background,box-shadow] duration-150 hover:bg-[linear-gradient(90deg,rgba(5,122,240,0.1),#121212)] hover:shadow-[inset_0_0_1px_0_#057af0,0_0_1px_0_#057af0]"
           style={`border-left-color:${catColor(g.category)}`}>
           <Cover category={g.category} image={g.cover} tiny class="h-[54px] w-[90px] shrink-0 rounded-[4px] md:w-[104px]" />
           <span class="flex min-w-0 flex-col">
             <span class="line-clamp-2 text-[16px] leading-[20px] font-semibold text-white">{g.title}</span>
-            <span class="text-[14px] leading-[20px] text-[#e8e8e8]/80">{g.status === "a-venir" ? "En préparation" : formatDate(g.updated)}</span>
+            <span class="text-[14px] leading-[20px] text-[#e8e8e8]/80">{g.status === "a-venir" ? ui(locale, "In preparation", "En préparation") : formatDate(g.updated, locale)}</span>
           </span>
         </a>
       </li>

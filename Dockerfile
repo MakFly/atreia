@@ -1,31 +1,31 @@
-# syntax=docker/dockerfile:1.7
-# Image unique : le serveur Hono sert l'API et le front buildé.
+# syntax=docker/dockerfile:1
+ARG NODE_IMAGE=node:22-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392
+FROM oven/bun:1.4.0@sha256:5ff609364c049b54eb0ff560ec96319729a972078ef2c755d758f0c6ef89c2d6 AS bun-bin
 
-FROM oven/bun:1.4.0 AS build
-WORKDIR /repo
-COPY package.json bun.lock tsconfig.base.json ./
-COPY apps/web/package.json apps/web/
-COPY apps/server/package.json apps/server/
-COPY packages/shared/package.json packages/shared/
-COPY packages/content/package.json packages/content/
-RUN --mount=type=cache,id=atreia-bun,target=/root/.bun/install/cache bun install --frozen-lockfile
-COPY . .
-# URL publique obligatoire via Compose, vide par défaut pour les appels directs.
-ARG SITE_URL=
-ENV SITE_URL=${SITE_URL}
-RUN bun run typecheck && bun run test && bun run build
-
-FROM node:22-alpine AS runtime
-ENV NODE_ENV=production PORT=8787 \
-    CONTENT_DIR=/app/packages/content/guides \
-    WEB_DIST_DIR=/app/apps/web/dist
+FROM ${NODE_IMAGE} AS build
+COPY --from=bun-bin /usr/local/bin/bun /usr/local/bin/bun
 WORKDIR /app
-# Le bundle serveur embarque toutes ses dépendances : pas de node_modules en runtime.
-COPY --from=build /repo/apps/server/dist apps/server/dist
-COPY --from=build /repo/apps/web/dist apps/web/dist
-COPY --from=build /repo/packages/content/guides packages/content/guides
+COPY package.json bun.lock ./
+COPY apps/web/package.json ./apps/web/package.json
+COPY apps/server/package.json ./apps/server/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/content/package.json ./packages/content/package.json
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
+COPY . .
+ARG SITE_URL
+ENV SITE_URL=${SITE_URL}
+RUN test -n "$SITE_URL" && bun run build
+
+FROM ${NODE_IMAGE} AS runtime
+WORKDIR /app
+ENV NODE_ENV=production PORT=8787
+COPY --from=build --chown=node:node /app/package.json ./
+COPY --from=build --chown=node:node /app/apps/server/dist ./apps/server/dist
+COPY --from=build --chown=node:node /app/apps/web/dist ./apps/web/dist
+COPY --from=build --chown=node:node /app/packages/content/guides.sqlite ./packages/content/guides.sqlite
 USER node
 EXPOSE 8787
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD wget -qO- http://127.0.0.1:8787/health || exit 1
-CMD ["node", "--enable-source-maps", "apps/server/dist/index.js"]
+HEALTHCHECK --interval=30s --timeout=4s --start-period=20s --retries=3 \
+  CMD ["node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||8787)+'/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+CMD ["node", "apps/server/dist/index.js"]

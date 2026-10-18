@@ -1,10 +1,13 @@
 ---
 import Base from "@/layouts/Base.astro";
+import { getLocale, localizePath, ui } from "@/lib/i18n";
+const locale = getLocale(Astro.url.pathname);
+const t = (en: string, fr: string) => ui(locale, en, fr);
 ---
-<Base title="Page introuvable" description="Cette page n'existe pas ou a changé d'adresse." noindex>
+<Base locale={locale} title={t("Page not found", "Page introuvable")} description={t("This page does not exist or has moved.", "Cette page n'existe pas ou a changé d'adresse.")} noindex>
   <div class="mx-auto max-w-[1374px] px-4 pt-10 sm:px-6">
-  <h1 class="text-3xl font-extrabold tracking-tight">Cette page s'est perdue dans l'Abysse</h1>
-  <p class="text-muted-foreground mt-3 max-w-xl text-lg">Le lien est peut-être ancien, ou le guide a changé d'adresse. Utilise la recherche ou la liste des guides.</p>
-  <a href="/guides/" class="bg-primary text-primary-foreground mt-6 inline-flex h-10 items-center rounded-md px-5 text-sm font-bold">Voir les guides</a>
+    <h1 class="text-3xl font-extrabold tracking-tight">{t("Lost in the Abyss", "Cette page s'est perdue dans l'Abysse")}</h1>
+    <p class="text-muted-foreground mt-3 max-w-xl text-lg">{t("The link may be old, or the guide may have moved. Use search or browse the guides.", "Le lien est peut-être ancien, ou le guide a changé d'adresse. Utilise la recherche ou la liste des guides.")}</p>
+    <a href={localizePath("/guides/", locale)} class="bg-primary text-primary-foreground mt-6 inline-flex h-11 items-center rounded-md px-5 text-sm font-bold">{t("Browse guides", "Voir les guides")}</a>
   </div>
 </Base>

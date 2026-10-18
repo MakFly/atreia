@@ -3,6 +3,7 @@ import { Dialog } from "radix-ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { resolveHref } from "@/lib/links";
 import { cn } from "@/lib/utils";
+import { localizePath, ui, type Locale } from "@/lib/i18n";
 
 export interface SearchItem {
   href: string;
@@ -14,7 +15,8 @@ export interface SearchItem {
 
 const normalize = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
-export default function SearchDialog({ items, label = "Rechercher" }: { items: SearchItem[]; label?: string }) {
+export default function SearchDialog({ items, label, locale = "en" }: { items: SearchItem[]; label?: string; locale?: Locale }) {
+  const searchLabel = label ?? ui(locale, "Search", "Rechercher");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -44,7 +46,7 @@ export default function SearchDialog({ items, label = "Rechercher" }: { items: S
   useEffect(() => setActive(0), [query]);
 
   const go = (href: string) => {
-    window.location.href = resolveHref(href);
+    window.location.href = resolveHref(localizePath(href, locale));
   };
 
   return (
@@ -52,11 +54,11 @@ export default function SearchDialog({ items, label = "Rechercher" }: { items: S
       <Dialog.Trigger asChild>
         <button
           type="button"
-          aria-label={label}
-          className="group flex h-[44px] items-center gap-[12px] text-left md:h-[24px] md:w-full"
+          aria-label={searchLabel}
+          className="group flex h-[44px] w-[44px] items-center justify-center gap-[12px] text-left md:h-[24px] md:w-full md:justify-start"
         >
           <SearchIcon className="size-[22px] text-[#e8e8e8] md:size-[24px]" strokeWidth={1.5} aria-hidden="true" />
-          <span className="hidden truncate text-[16px] leading-[20px] text-[#95989b] transition-colors group-hover:text-white md:inline">{label}</span>
+          <span className="hidden truncate text-[16px] leading-[20px] text-[#95989b] transition-colors group-hover:text-white md:inline">{searchLabel}</span>
           <kbd className="ml-auto hidden rounded-[4px] border border-[#2b2c2c] px-[6px] text-[11px] leading-[18px] whitespace-nowrap text-[#737373] lg:inline">Ctrl K</kbd>
         </button>
       </Dialog.Trigger>
@@ -66,7 +68,7 @@ export default function SearchDialog({ items, label = "Rechercher" }: { items: S
           className="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 fixed top-[12vh] left-1/2 z-[251] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-xl border shadow-2xl"
           aria-describedby={undefined}
         >
-          <Dialog.Title className="sr-only">Rechercher dans les guides</Dialog.Title>
+          <Dialog.Title className="sr-only">{ui(locale, "Search the guides", "Rechercher dans les guides")}</Dialog.Title>
           <div className="flex items-center gap-2 border-b px-4">
             <SearchIcon className="text-muted-foreground size-4" aria-hidden="true" />
             <input
@@ -79,7 +81,7 @@ export default function SearchDialog({ items, label = "Rechercher" }: { items: S
                 if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)); }
                 if (e.key === "Enter" && results[active]) go(results[active].href);
               }}
-              placeholder="Assassin, serveurs, abonnement…"
+              placeholder={ui(locale, "Assassin, servers, subscription…", "Assassin, serveurs, abonnement…")}
               className="h-12 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
               role="combobox"
               aria-expanded="true"
@@ -90,13 +92,13 @@ export default function SearchDialog({ items, label = "Rechercher" }: { items: S
           <ul id="search-results" ref={listRef} role="listbox" className="max-h-[50vh] overflow-y-auto p-2">
             {results.length === 0 && (
               <li className="text-muted-foreground px-3 py-6 text-center text-sm">
-                Aucun guide ne correspond. Essaie un nom de classe, de serveur ou un mot comme « Kinah ».
+                {ui(locale, "No guides match. Try a class, server, or a word like ‘Kinah’.", "Aucun guide ne correspond. Essaie un nom de classe, de serveur ou un mot comme « Kinah ».")}
               </li>
             )}
             {results.map((r, i) => (
               <li key={r.href} id={`result-${i}`} role="option" aria-selected={i === active}>
                 <a
-                  href={resolveHref(r.href)}
+                  href={resolveHref(localizePath(r.href, locale))}
                   onMouseEnter={() => setActive(i)}
                   className={cn("block rounded-md px-3 py-2.5", i === active && "bg-accent")}
                 >

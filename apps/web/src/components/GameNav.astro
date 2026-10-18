@@ -1,17 +1,22 @@
 ---
 // Barre du jeu, relevé maxroll.gg : 59 px, liens centrés 18 px gris (#95989b) → blanc au survol,
 // séparateurs de 1 px, onglet actif en blanc gras souligné de la couleur du jeu.
-import { isActive, MAIN_NAV } from "@/lib/nav";
+import { getMainNav, isActive } from "@/lib/nav";
+import { getLocale, ui } from "@/lib/i18n";
+import PlayerCount from "@/components/PlayerCount.astro";
 interface Props { current: string; name: string }
 const { current, name } = Astro.props;
+const locale = getLocale(Astro.url.pathname);
+const navLinks = getMainNav(locale);
 // Un guide sans entrée dédiée allume l'onglet « Guides », comme « Build Guides » sur la référence.
-const exact = MAIN_NAV.some((l) => isActive(l.href, current));
-const active = (href: string) => isActive(href, current) || (!exact && href === "/guides/" && current.startsWith(href));
+const exact = navLinks.some((l) => isActive(l.href, current));
+const guidesHref = navLinks.find((l) => l.label === ui(locale, "Guides", "Guides"))?.href ?? "/guides/";
+const active = (href: string) => isActive(href, current) || (!exact && href === guidesHref && current.startsWith(href));
 ---
-<div class="sticky top-[60px] z-[100] border-b border-[#1c1c1c] bg-[#0a0a0a] md:top-0">
-  <nav aria-label={`Navigation ${name}`} class="no-scrollbar flex h-[59px] items-stretch overflow-x-auto px-[6px] md:justify-center md:px-[24px]">
-    <ul class="flex items-stretch">
-      {MAIN_NAV.map((l, i) => {
+<div class="sticky top-[60px] z-[100] flex items-center gap-2 border-b border-[#1c1c1c] bg-[#0a0a0a] pr-3 md:top-0 md:pr-6">
+  <nav aria-label={ui(locale, `${name} navigation`, `Navigation ${name}`)} class="no-scrollbar flex h-[59px] min-w-0 flex-1 items-stretch overflow-x-auto px-[6px] md:px-[24px]">
+    <ul class="flex shrink-0 items-stretch md:mx-auto">
+      {navLinks.map((l, i) => {
         const on = active(l.href);
         return (
           <li class="flex items-center">
@@ -29,4 +34,5 @@ const active = (href: string) => isActive(href, current) || (!exact && href === 
       })}
     </ul>
   </nav>
+  <PlayerCount locale={locale} />
 </div>

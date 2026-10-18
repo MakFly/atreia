@@ -1,9 +1,12 @@
 // @ts-check
 import { unified } from "@astrojs/markdown-remark";
+import node from "@astrojs/node";
 import react from "@astrojs/react";
-import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
+import votesDev from "./votes-dev.mjs";
+import playersDev from "./players-dev.mjs";
+import newsDev from "./news-dev.mjs";
 import rehypeImages from "./src/lib/rehype-images.ts";
 
 // Astro 7 charge un objet de configuration sans lui transmettre la commande.
@@ -27,7 +30,9 @@ if (isBuild) {
 export default defineConfig({
   // URL publique : utilisée pour le sitemap et les URLs canoniques.
   site: site || "http://localhost:4321",
-  output: "static",
+  output: "server",
+  adapter: node({ mode: "middleware" }),
+  session: false,
   trailingSlash: "always",
   build: { assets: "assets" },
   // Le site était un portail sous /aion2/ : les anciennes URL renvoient vers la racine.
@@ -39,8 +44,13 @@ export default defineConfig({
     "/aion2/classes": "/classes/",
     "/aion2/serveurs": "/serveurs/",
   },
-  integrations: [react(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith("/aion2/") })],
-  
+  integrations: [react()],
   markdown: { processor: unified({ rehypePlugins: [rehypeImages] }) },
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss(), votesDev(), playersDev(), newsDev()],
+    ssr: { noExternal: [/@aion2\//] },
+    // Mermaid tire dayjs en CommonJS. Sans prébundle, l'import default casse
+    // et le bloc reste du code coloré. On le force au démarrage.
+    optimizeDeps: { include: ["mermaid"] },
+  },
 });

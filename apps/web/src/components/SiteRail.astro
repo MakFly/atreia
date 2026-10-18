@@ -2,27 +2,31 @@
 // Rail fixe à gauche (≥ md), relevé maxroll.gg : 96 px, noir, logo puis accueil, guides et pastille AION 2 de 40 px.
 import { BookOpenTextIcon, HouseIcon } from "lucide-react";
 import Logo from "@/components/Logo.astro";
+import { getLocale, localizePath, ui } from "@/lib/i18n";
 interface Props { current: string }
 const { current } = Astro.props;
+const locale = getLocale(Astro.url.pathname);
+const homeHref = localizePath("/", locale);
+const guidesHref = localizePath("/guides/", locale);
 ---
-<aside class="bg-chrome fixed inset-y-0 left-0 z-[110] hidden w-[96px] flex-col items-center md:flex" aria-label="Navigation du site">
-  <a href="/" class="mt-[12px] flex size-[48px] items-center justify-center" aria-label="Atreia, accueil">
+<aside class="bg-chrome fixed inset-y-0 left-0 z-[110] hidden w-[96px] flex-col items-center md:flex" aria-label={ui(locale, "Site navigation", "Navigation du site")}>
+  <a href={homeHref} class="mt-[12px] flex size-[48px] items-center justify-center" aria-label={ui(locale, "Atreia, home", "Atreia, accueil")}>
     <Logo class="size-[40px]" />
   </a>
-  <nav class="mt-[42px] flex flex-col items-center gap-[14px]" aria-label="Accueil et guides">
-    <a href="/" title="Accueil" aria-current={current === "/" ? "page" : undefined}
-      class:list={["flex size-[48px] items-center justify-center rounded-[12px] transition-colors", current === "/" ? "text-white" : "text-[#95989b] hover:text-white"]}>
+  <nav class="mt-[42px] flex flex-col items-center gap-[14px]" aria-label={ui(locale, "Home and guides", "Accueil et guides")}>
+    <a href={homeHref} title={ui(locale, "Home", "Accueil")} aria-current={current === homeHref ? "page" : undefined}
+      class:list={["flex size-[48px] items-center justify-center rounded-[12px] transition-colors", current === homeHref ? "text-white" : "text-[#95989b] hover:text-white"]}>
       <HouseIcon className="size-[24px]" strokeWidth={1.5} />
-      <span class="sr-only">Accueil</span>
+      <span class="sr-only">{ui(locale, "Home", "Accueil")}</span>
     </a>
-    <a href="/guides/" title="Tous les guides" aria-current={current === "/guides/" ? "page" : undefined}
-      class:list={["flex size-[48px] items-center justify-center rounded-[12px] transition-colors", current === "/guides/" ? "text-white" : "text-[#95989b] hover:text-white"]}>
+    <a href={guidesHref} title={ui(locale, "All guides", "Tous les guides")} aria-current={current === guidesHref ? "page" : undefined}
+      class:list={["flex size-[48px] items-center justify-center rounded-[12px] transition-colors", current === guidesHref ? "text-white" : "text-[#95989b] hover:text-white"]}>
       <BookOpenTextIcon className="size-[24px]" strokeWidth={1.5} />
-      <span class="sr-only">Tous les guides</span>
+      <span class="sr-only">{ui(locale, "All guides", "Tous les guides")}</span>
     </a>
     <span class="mt-[2px] h-px w-[40px] bg-[#2b2c2c]" aria-hidden="true"></span>
     <!-- Pastille du jeu : le site est dédié à AION 2, elle reste allumée. -->
-    <a href="/" title="AION 2"
+    <a href={homeHref} title="AION 2"
       class="flex size-[40px] items-center justify-center rounded-full border-2 border-[#057af0] bg-[#121212] shadow-[0_0_10px_3px_rgba(5,122,240,0.45)]">
       <Logo class="size-[24px]" />
       <span class="sr-only">AION 2</span>

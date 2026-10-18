@@ -2,6 +2,7 @@ import type { ComponentProps } from "react";
 import { XIcon } from "lucide-react";
 import { Dialog as SheetPrimitive } from "radix-ui";
 import { cn } from "@/lib/utils";
+import { ui, type Locale } from "@/lib/i18n";
 
 function Sheet(props: ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -17,8 +18,9 @@ function SheetContent({
   className,
   children,
   side = "right",
+  locale = "en",
   ...props
-}: ComponentProps<typeof SheetPrimitive.Content> & { side?: "top" | "right" | "bottom" | "left" }) {
+}: ComponentProps<typeof SheetPrimitive.Content> & { side?: "top" | "right" | "bottom" | "left"; locale?: Locale }) {
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
@@ -44,7 +46,7 @@ function SheetContent({
         {children}
         <SheetPrimitive.Close className="ring-offset-background focus:ring-ring absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
           <XIcon className="size-4" />
-          <span className="sr-only">Fermer</span>
+          <span className="sr-only">{ui(locale, "Close", "Fermer")}</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPrimitive.Portal>

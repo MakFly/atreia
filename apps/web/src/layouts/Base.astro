@@ -2,7 +2,6 @@
 import "@fontsource-variable/source-sans-3";
 import "@fontsource-variable/oswald";
 import "@/styles/global.css";
-import { CATEGORIES } from "@aion2/shared/browser";
 import GameNav from "@/components/GameNav.astro";
 import Logo from "@/components/Logo.astro";
 import MobileNav from "@/components/MobileNav";
@@ -11,10 +10,12 @@ import SiteRail from "@/components/SiteRail.astro";
 import SearchDialog, { type SearchItem } from "@/components/SearchDialog";
 import { DEFAULT_SHARE_IMAGE, imageSize } from "@/lib/images";
 import { BookOpenTextIcon } from "lucide-react";
-import { MAIN_NAV } from "@/lib/nav";
-import { getCollection } from "astro:content";
+import { getMainNav } from "@/lib/nav";
+import { categoryLabels, getLocale, localizePath, ui } from "@/lib/i18n";
+import { guideHref, searchGuides } from "@/lib/guides";
 
 interface Props {
+  locale?: "en" | "fr";
   title: string;
   description: string;
   /** Image de partage (Open Graph, Twitter), chemin sous public/ */
@@ -28,43 +29,49 @@ interface Props {
 }
 const { title, description, image, type = "website", modified, jsonLd = [], noindex = false } = Astro.props;
 const current = Astro.url.pathname;
+const locale = Astro.props.locale ?? getLocale(current);
+const href = (path: string) => localizePath(path, locale);
+const t = (en: string, fr: string) => ui(locale, en, fr);
 
-const entries = await getCollection("guides");
+const guideSearch = await searchGuides(locale);
 const searchItems: SearchItem[] = [
-  ...entries.map((e) => ({
-    href: `/guides/${e.id}/`,
-    title: e.data.title,
-    category: CATEGORIES[e.data.category].label,
-    text: [e.data.summary, ...e.data.tags, ...(e.body ?? "").split("\n").filter((l) => l.startsWith("#"))].join(" "),
+  { href: href("/actualites/"), title: t("AION 2 news", "Actualités AION 2"), category: "Atreia", text: t("news official patch notes update maintenance events battle pass daeva shop", "actualités officiel patch mise à jour maintenance événements battle pass daeva boutique") },
+  ...guideSearch.map((guide) => ({
+    href: guideHref(guide.slug, locale),
+    title: guide.title,
+    category: categoryLabels[locale][guide.category],
+    text: guide.text,
   })),
-  { href: "/serveurs/", title: "Serveurs EU", category: "Atreia", text: "serveurs europe paires elyos asmodiens accès anticipé f2p transfert" },
-  { href: "/classes/", title: "Les 8 classes", category: "Atreia", text: "classes gladiateur templier assassin rôdeur sorcier spiritualiste clerc chantre tier list notes" },
+  { href: href("/serveurs/"), title: t("EU servers", "Serveurs EU"), category: "Atreia", text: t("servers europe pairs elyos asmodians early access f2p transfer", "serveurs europe paires elyos asmodiens accès anticipé f2p transfert") },
+  { href: href("/classes/"), title: t("All 8 classes", "Les 8 classes"), category: "Atreia", text: t("classes gladiator templar assassin ranger sorcerer spiritmaster cleric chanter tier list ratings", "classes gladiateur templier assassin rôdeur sorcier spiritualiste clerc chantre tier list notes") },
 ];
-const pageTitle = current === "/" ? "Atreia, guides AION 2 en français" : `${title} · Atreia`;
+const pageTitle = current === href("/") ? t("Atreia, AION 2 guides in English", "Atreia, guides AION 2 en français") : `${title} · Atreia`;
 const canonical = new URL(current, Astro.site);
 
-const share = image ?? { src: DEFAULT_SHARE_IMAGE, alt: "Atréia brisée, fond officiel d'AION 2" };
+const share = image ?? { src: DEFAULT_SHARE_IMAGE, alt: t("Shattered Atreia, official AION 2 artwork", "Atréia brisée, fond officiel d'AION 2") };
 const shareUrl = new URL(share.src, Astro.site).href;
 const shareSize = imageSize(share.src);
-const siteUrl = new URL("/", Astro.site).href;
+const siteUrl = new URL(href("/"), Astro.site).href;
 const graph = {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "WebSite", "@id": `${siteUrl}#site`, url: siteUrl, name: "Atreia", inLanguage: "fr-FR",
-      description: "Guides AION 2 en français pour les serveurs européens." },
+    { "@type": "WebSite", "@id": `${siteUrl}#site`, url: siteUrl, name: "Atreia", inLanguage: locale === "fr" ? "fr-FR" : "en-GB",
+      description: t("AION 2 guides in English for European servers.", "Guides AION 2 en français pour les serveurs européens.") },
     { "@type": "VideoGame", "@id": `${siteUrl}#game`, name: "AION 2", publisher: { "@type": "Organization", name: "NC Corporation" } },
     ...jsonLd,
   ],
 };
 ---
 <!doctype html>
-<html lang="fr" class="dark" data-faction="elyos" data-root="/" data-index="">
+<html lang={locale} class="dark" data-faction="elyos" data-root="/" data-index="">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {!noindex && ["en", "fr"].map((language) => <link rel="alternate" hreflang={language} href={new URL(localizePath(current, language as "en" | "fr"), Astro.site)} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(localizePath(current, "en"), Astro.site)} />}
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#0b0b0c" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -73,7 +80,8 @@ const graph = {
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content={locale === "fr" ? "fr_FR" : "en_GB"} />
+    <meta property="og:locale:alternate" content={locale === "fr" ? "en_GB" : "fr_FR"} />
     <meta property="og:image" content={shareUrl} />
     <meta property="og:image:width" content={String(shareSize.width)} />
     <meta property="og:image:height" content={String(shareSize.height)} />
@@ -96,7 +104,7 @@ const graph = {
     </script>
   </head>
   <body class="min-h-svh">
-    <a href="#contenu" class="bg-primary text-primary-foreground sr-only z-[300] rounded-md px-3 py-2 focus:not-sr-only focus:fixed focus:top-2 focus:left-2">Aller au contenu</a>
+    <a href="#contenu" class="bg-primary text-primary-foreground sr-only z-[300] rounded-md px-3 py-2 focus:not-sr-only focus:fixed focus:top-2 focus:left-2">{t("Skip to content", "Aller au contenu")}</a>
 
     <SiteRail current={current} />
 
@@ -104,20 +112,28 @@ const graph = {
       <!-- Mobile : barre collante de 60 px (logo, recherche, menu). Desktop : header noir de 72 px sous lequel passe le rail. -->
       <header class="bg-chrome sticky top-0 z-[105] h-[60px] md:static md:h-[72px]">
         <div class="flex h-full items-center gap-[8px] pr-[12px] pl-[20px] md:gap-0 md:pr-[36px] md:pl-[36px]">
-          <a href="/" class="flex items-center gap-[8px] md:hidden">
+          <a href={href("/")} class="flex shrink-0 items-center gap-[8px] md:hidden">
             <Logo class="size-[32px]" />
-            <span class="font-display text-[22px] font-semibold tracking-wide text-white">Atreia</span>
+            <span class="font-display hidden min-[360px]:inline text-[22px] font-semibold tracking-wide text-white">Atreia</span>
           </a>
-          <a href="/guides/" class="group hidden items-center gap-[12px] md:flex">
+          <a href={href("/guides/")} class="group hidden items-center gap-[12px] md:flex">
             <BookOpenTextIcon className="size-[22px] text-[#95989b] transition-colors group-hover:text-white" strokeWidth={1.5} />
-            <span class="hidden text-[16px] leading-[24px] whitespace-nowrap text-[#808191] transition-colors group-hover:text-white lg:inline">Parcourir les guides</span>
+            <span class="hidden text-[16px] leading-[24px] whitespace-nowrap text-[#808191] transition-colors group-hover:text-white lg:inline">{t("Browse guides", "Parcourir les guides")}</span>
           </a>
           <span class="mx-[24px] hidden h-[40px] w-px bg-[#2b2c2c] md:block" aria-hidden="true"></span>
           <div class="ml-auto md:ml-0 md:w-[260px] lg:w-[340px]">
-            <SearchDialog client:idle items={searchItems} label="Rechercher dans les guides AION 2" />
+            <SearchDialog client:idle items={searchItems} locale={locale} label={t("Search AION 2 guides", "Rechercher dans les guides AION 2")} />
           </div>
-          <div class="ml-auto hidden md:block"><PrefsControls /></div>
-          <MobileNav client:media="(max-width: 767px)" links={MAIN_NAV} current={current} />
+          <nav aria-label={t("Language", "Langue")} class="flex shrink-0 items-center md:ml-auto md:mr-4">
+            {(["en", "fr"] as const).map((language) => <a
+              href={localizePath(current, language)} lang={language} hreflang={language}
+              aria-current={locale === language ? "page" : undefined}
+              aria-label={language === "en" ? "English" : "Français"}
+              class:list={["flex min-h-11 min-w-11 items-center justify-center rounded text-sm font-semibold transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", locale === language ? "text-white" : "text-muted-foreground"]}
+            >{language.toUpperCase()}</a>)}
+          </nav>
+          <div class="hidden md:block"><PrefsControls /></div>
+          <MobileNav client:media="(max-width: 767px)" links={getMainNav(locale)} locale={locale} current={current} />
         </div>
       </header>
 
@@ -129,16 +145,16 @@ const graph = {
 
       <footer class="bg-chrome mt-[96px] md:rounded-tl-[32px]">
         <div class="mx-auto flex max-w-[1374px] flex-col items-center gap-[28px] px-[20px] pt-[72px] pb-[40px] text-center md:px-[24px]">
-          <nav aria-label="Pied de page" class="flex flex-wrap justify-center gap-x-[40px] gap-y-[8px] text-[12px] leading-[18px] text-[#95989b]">
-            <a href="/guides/" class="hover:text-white">Tous les guides</a>
-            <a href="/guides/annuaire-ressources/" class="hover:text-white">Sources et ressources</a>
-            <a href="/serveurs/" class="hover:text-white">Serveurs EU</a>
-            <a href="/sitemap-index.xml" class="hover:text-white">Plan du site</a>
+          <nav aria-label={t("Footer", "Pied de page")} class="flex flex-wrap justify-center gap-x-[40px] gap-y-[8px] text-[12px] leading-[18px] text-[#95989b]">
+            <a href={href("/guides/")} class="hover:text-white">{t("All guides", "Tous les guides")}</a>
+            <a href={href("/guides/annuaire-ressources/")} class="hover:text-white">{t("Sources and resources", "Sources et ressources")}</a>
+            <a href={href("/serveurs/")} class="hover:text-white">{t("EU servers", "Serveurs EU")}</a>
+            <a href="/sitemap-index.xml" class="hover:text-white">{t("Sitemap", "Plan du site")}</a>
           </nav>
           <div class="flex flex-col gap-[4px] text-[12px] leading-[18px] text-[#737373]">
-            <p>Atreia est un site de fans, non affilié aux éditeurs. AION 2 et ses marques appartiennent à NCSoft.</p>
-            <p>Images d'AION 2 : © NC Corporation. All Rights Reserved.</p>
-            <p>Chaque guide est daté et cite ses sources. Vérifie les annonces officielles avant de dépenser.</p>
+            <p>{t("Atreia is an independent fan site. AION 2 and its trademarks belong to NCSoft.", "Atreia est un site de fans, non affilié aux éditeurs. AION 2 et ses marques appartiennent à NCSoft.")}</p>
+            <p>{t("AION 2 images: © NC Corporation. All Rights Reserved.", "Images d'AION 2 : © NC Corporation. All Rights Reserved.")}</p>
+            <p>{t("Every guide is dated and cites its sources. Check official announcements before spending.", "Chaque guide est daté et cite ses sources. Vérifie les annonces officielles avant de dépenser.")}</p>
           </div>
         </div>
       </footer>

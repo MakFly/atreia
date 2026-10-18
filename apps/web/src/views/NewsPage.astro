@@ -1,0 +1,25 @@
+---
+import { NewspaperIcon } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import GameHero from "@/components/GameHero.astro";
+import OfficialNews from "@/components/OfficialNews";
+import SectionTitle from "@/components/SectionTitle.astro";
+import Base from "@/layouts/Base.astro";
+import { localizePath, ui, type Locale } from "@/lib/i18n";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const region = locale === "fr" ? "fr-fr" : "en-us";
+---
+<Base locale={locale} title={ui(locale, "AION 2 news, Battle Pass and patch notes", "Actualités AION 2, Battle Pass et mises à jour")} description={ui(locale, "Follow official Global AION 2 announcements: patch notes, events, Daeva Pass, shop and maintenance. Automatically refreshed feed with dated source links.", "Suis les annonces officielles AION 2 Global : notes de mise à jour, événements, Daeva Pass, boutique et maintenances. Fil actualisé automatiquement et sources datées.")}>
+  <div class="mx-auto max-w-[1374px] md:px-6">
+    <GameHero name="AION 2" compact />
+    <div class="mt-5"><Breadcrumb items={[{ label: ui(locale, "Home", "Accueil"), href: localizePath("/", locale) }, { label: ui(locale, "News", "Actualités") }]} /></div>
+    <div class="mt-8 px-3 md:px-5">
+      <SectionTitle as="h1" icon={NewspaperIcon} title={ui(locale, "AION 2 news", "Actualités AION 2")} color="#057af0" />
+      <p class="mt-2 max-w-3xl text-[15px] leading-6 text-[#95989b]">{ui(locale, "The latest from Atreia: patch notes, events, Daeva Pass and official announcements.", "Toute l’actualité d’Atréia : mises à jour, événements, Daeva Pass et annonces officielles.")}</p>
+      <OfficialNews locale={locale} client:load />
+      <p class="mt-3 text-sm"><a href={`https://aion2.plaync.com/${region}/board/notice/list`} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center text-[#95989b] hover:text-white hover:underline">{ui(locale, "Official archives ↗", "Archives officielles ↗")}</a></p>
+      <noscript><p class="mt-4 text-[#dadada]">{ui(locale, "Enable JavaScript to load and filter the live feed, or use the official archive link above.", "Active JavaScript pour charger et filtrer le fil synchronisé, ou consulte les archives officielles ci-dessus.")}</p></noscript>
+    </div>
+  </div>
+</Base>

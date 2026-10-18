@@ -4,25 +4,28 @@
 import type { GuideMeta } from "@aion2/shared/browser";
 import { ClockIcon } from "lucide-react";
 import Cover from "@/components/Cover.astro";
-import { CAT_TAG } from "@/lib/cats";
+import { getCatTag } from "@/lib/cats";
 import { guideHref } from "@/lib/guides";
+import { getLocale, localizePath, ui } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils";
 interface Props { guide: GuideMeta }
 const { guide: g } = Astro.props;
+const locale = getLocale(Astro.url.pathname);
+const labels = getCatTag(locale);
 ---
-<a href={guideHref(g.slug)}
+<a href={localizePath(guideHref(g.slug), locale)}
   class="group flex flex-col gap-[12px] rounded-[12px] bg-[#121212] p-[8px] shadow-[inset_0_0_1px_0_#1c1c1c,0_0_1px_0_#1c1c1c] transition-shadow duration-150 hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c] sm:flex-row">
   <Cover category={g.category} image={g.cover} class="aspect-[16/9] w-full shrink-0 rounded-[8px] sm:aspect-auto sm:h-[130px] sm:w-[230px]" />
   <div class="flex min-w-0 flex-1 flex-col px-[4px] pb-[4px] sm:py-[4px] sm:pr-[8px]">
     <div class="flex items-center justify-between gap-[8px]">
-      <span class="rounded-[4px] border border-[#5c5c5c] px-[6px] text-[11px] leading-[16px] font-semibold text-[#95989b] uppercase">{CAT_TAG[g.category]}</span>
+      <span class="rounded-[4px] border border-[#5c5c5c] px-[6px] text-[11px] leading-[16px] font-semibold text-[#95989b] uppercase">{labels[g.category]}</span>
       <span class="rounded-[4px] border border-[#2b2c2c] px-[6px] text-[11px] leading-[16px] text-[#737373]">{g.patch}</span>
     </div>
     <h3 class="mt-[10px] text-[18px] leading-[22.5px] font-semibold text-white">{g.title}</h3>
     <p class="mt-[8px] line-clamp-3 text-[14px] leading-[20px] text-[#95989b]">{g.summary}</p>
     <div class="mt-auto flex items-center justify-between pt-[10px] text-[12px] leading-[16px] text-[#737373]">
-      <span>par <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {g.status === "a-venir" ? "en préparation" : formatDate(g.updated)}</span>
-      {g.status === "publie" && <span class="flex items-center gap-[4px]">Lecture <ClockIcon className="size-[12px]" /> <span class="font-semibold text-[#e8e8e8]">{g.readingMinutes} min</span></span>}
+      <span>{ui(locale, "by", "par")} <span class="font-semibold text-[#e8e8e8]">Atreia</span> · {g.status === "a-venir" ? ui(locale, "in preparation", "en préparation") : formatDate(g.updated, locale)}</span>
+      {g.status === "publie" && <span class="flex items-center gap-[4px]">{ui(locale, "Read", "Lecture")} <ClockIcon className="size-[12px]" /> <span class="font-semibold text-[#e8e8e8]">{g.readingMinutes} min</span></span>}
     </div>
   </div>
 </a>

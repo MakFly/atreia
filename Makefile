@@ -12,6 +12,10 @@ RUN_DIR   := .run
 WEB_PORT  ?= 4321
 API_PORT  ?= 8787
 
+DOCKER_IMAGE   ?= atreia:local
+DOCKER_BUILDER ?=
+SITE_URL       ?= http://localhost:8787
+
 # First free TCP port starting at $(1).
 free_port = p=$(1); while lsof -nP -iTCP:$$p -sTCP:LISTEN >/dev/null 2>&1; do p=$$((p+1)); done; echo $$p
 
@@ -41,7 +45,8 @@ dev: ## Start Astro (web) and Hono (api) in the background on free ports
 	[ "$$web" = "$$api" ] && api=$$($(call free_port,$$((api+1)))); \
 	( cd apps/server && { PORT=$$api NODE_ENV=development LOG_LEVEL=debug \
 		nohup ./node_modules/.bin/tsx watch src/index.ts > ../../$(RUN_DIR)/api.log 2>&1 & echo $$! > ../../$(RUN_DIR)/api.pid; } ); \
-	( cd apps/web && { nohup ./node_modules/.bin/astro dev --host 127.0.0.1 --port $$web \
+	( cd apps/web && { GUIDES_API_ORIGIN="http://127.0.0.1:$$api" \
+		nohup ./node_modules/.bin/astro dev --host 127.0.0.1 --port $$web \
 		> ../../$(RUN_DIR)/web.log 2>&1 & echo $$! > ../../$(RUN_DIR)/web.pid; } ); \
 	echo $$web > $(RUN_DIR)/web.port; echo $$api > $(RUN_DIR)/api.port; \
 	printf "$(C_OK)[make] web  http://127.0.0.1:$$web/$(C_RESET)\n"; \
@@ -75,6 +80,12 @@ logs: ## Follow the dev server logs
 	@tail -f $(RUN_DIR)/web.log $(RUN_DIR)/api.log
 
 # ─── Build / Check ───────────────────────────────────────────────────────────
+
+.PHONY: build-docker
+build-docker: ## Build the production Docker image (SITE_URL and DOCKER_IMAGE are configurable)
+	@docker buildx build $(if $(DOCKER_BUILDER),--builder "$(DOCKER_BUILDER)",) \
+		--load --progress=plain --build-arg SITE_URL="$(SITE_URL)" -t "$(DOCKER_IMAGE)" .
+	@printf "$(C_OK)[make] Docker image ready: $(DOCKER_IMAGE)$(C_RESET)\n"
 
 .PHONY: typecheck
 typecheck: ## Typecheck every workspace

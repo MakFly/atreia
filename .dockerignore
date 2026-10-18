@@ -1,10 +1,12 @@
+.git
 **/node_modules
 **/dist
 **/dist-preview
-.git
-.env
+**/.astro
+**/.env*
 .run
-.astro
-apps/web/.astro
-*.log
 .claude
+.codex
+.agents
+coverage
+**/*.log

@@ -1,0 +1,73 @@
+---
+import { EU_SERVERS } from "@aion2/shared/browser";
+import { InfoIcon, ServerIcon } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import GameHero from "@/components/GameHero.astro";
+import SectionTitle from "@/components/SectionTitle.astro";
+import Base from "@/layouts/Base.astro";
+import { formatDate } from "@/lib/utils";
+import { ui, type Locale } from "@/lib/i18n";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+
+const waves = [
+  { key: "f2p", title: ui(locale, "Opened at free-to-play launch", "Ouverts au lancement F2P"), text: ui(locale, "Create your character here if you are starting now.", "C'est ici qu'il faut créer ton perso si tu commences maintenant."), recommended: true },
+  { key: "anticipe", title: ui(locale, "Early access", "Accès anticipé"), text: ui(locale, "Nine servers per faction, opened five days early to Founder’s Pack owners. Transfers are only possible to other servers in this group. Partial list.", "9 serveurs par faction, ouverts aux Founder's Packs avec 5 jours d'avance. Transferts possibles seulement vers d'autres serveurs de ce groupe. Liste partielle."), recommended: false },
+] as const;
+const factions = [
+  { key: "elyos", label: ui(locale, "Elyos", "Elyos") },
+  { key: "asmodien", label: ui(locale, "Asmodians", "Asmodiens") },
+] as const;
+---
+<Base locale={locale} title={ui(locale, "AION 2 EU servers", "Serveurs EU")} description={ui(locale, "A list of AION 2 European servers by faction, with guidance on where to start.", "Liste des serveurs européens d'AION 2 par faction, et lesquels choisir pour commencer.")}>
+  <div class="mx-auto max-w-[1374px] md:px-[24px]">
+  <GameHero name="AION 2" compact />
+  <div class="mt-[20px]">
+    <Breadcrumb items={[{ label: ui(locale, "Home", "Accueil"), href: locale === "fr" ? "/fr/" : "/" }, { label: ui(locale, "Servers", "Serveurs") }]} />
+  </div>
+  <div class="mt-[32px] px-[20px]">
+  <SectionTitle as="h1" icon={ServerIcon} title={ui(locale, "European servers", "Serveurs européens")} color="#057af0" />
+  <p class="mt-[12px] max-w-[720px] text-[16px] leading-[24px] text-[#95989b]">
+    {ui(locale, "Each Elyos server is paired with an Asmodian server: that is the faction you fight in rifts and the Abyss. Dungeons include all EU servers, while the market is limited to your server.", "Chaque serveur Elyos est apparié à un serveur Asmodien : c'est contre lui que tu te bats dans les failles et l'Abysse. Les donjons se font avec tous les serveurs EU, le marché reste limité à ton serveur.")}
+  </p>
+  <p class="mt-[16px] flex max-w-[720px] gap-[10px] rounded-[8px] bg-[#121212] p-[12px] text-[14px] leading-[20px] text-[#dadada] shadow-[inset_0_0_1px_0_#2b2c2c]">
+    <InfoIcon className="mt-[2px] size-[16px] shrink-0 text-[#057af0]" aria-hidden="true" />
+    <span>{ui(locale, "Snapshot from ", "Relevé du ")}{formatDate(EU_SERVERS.updated, locale)}. {ui(locale, "MetaBot lists 46 EU servers as of 16 October 2026, indicating a second wave opened after this snapshot.", EU_SERVERS.note)}</span>
+  </p>
+
+  <div class="mt-[40px] flex flex-col gap-[48px]">
+    {waves.map((w) => (
+      <section aria-labelledby={`w-${w.key}`}>
+        <div class="flex flex-wrap items-center gap-3">
+          <h2 id={`w-${w.key}`} class="border-l-[4px] border-[#057af0] pl-[10px] text-[22px] leading-[24px] font-semibold text-white uppercase">{w.title}</h2>
+          {w.recommended && <span class="rounded-[4px] bg-[#057af0] px-[8px] text-[12px] leading-[20px] font-semibold text-white uppercase">{ui(locale, "Recommended", "Recommandé")}</span>}
+        </div>
+        <p class="mt-[6px] max-w-[720px] text-[14px] leading-[20px] text-[#95989b]">{w.text}</p>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {factions.map((f) => (
+            <div class="rounded-[8px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c]" data-faction-card={f.key}>
+              <h3 class="flex items-center justify-between border-b border-[#2b2c2c] px-[16px] py-[12px] text-[18px] font-semibold text-white">
+                {f.label}
+                <span class="text-[12px] font-normal text-[#95989b] tabular-nums">{EU_SERVERS[w.key][f.key].length} {ui(locale, "servers", "serveurs")}</span>
+              </h3>
+              <ul class="grid grid-cols-2 gap-x-[16px] gap-y-[2px] p-[16px] text-[14px] text-[#dadada] sm:grid-cols-3">
+                {EU_SERVERS[w.key][f.key].map((name) => <li class="py-1">{name}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+  </div>
+  </div>
+</Base>
+
+<style>
+  /* La carte de ta faction ressort. */
+  :global(:root[data-faction="elyos"]) [data-faction-card="elyos"],
+  :global(:root[data-faction="asmodien"]) [data-faction-card="asmodien"] {
+    box-shadow: inset 0 0 0 1px var(--faction), 0 0 10px 1px color-mix(in oklch, var(--faction) 30%, transparent);
+  }
+</style>

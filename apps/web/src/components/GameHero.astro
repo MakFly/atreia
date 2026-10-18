@@ -3,8 +3,10 @@
 // description 16/24 #95989b sur 400 px max. Version compacte (guides, tier list) : 188 px, sans description ni saison.
 import Logo from "@/components/Logo.astro";
 import Picture from "@/components/Picture.astro";
+import { getLocale, ui } from "@/lib/i18n";
 interface Props { name: string; description?: string; compact?: boolean }
 const { name, description, compact = false } = Astro.props;
+const locale = getLocale(Astro.url.pathname);
 const LAUNCH = "2026-10-05";
 const Heading = compact ? "p" : "h1";
 ---
@@ -28,8 +30,10 @@ const Heading = compact ? "p" : "h1";
     <div class="mx-auto mt-[8px] flex h-[42px] max-w-[760px] items-center justify-center gap-[18px] border-y border-white/10 bg-[linear-gradient(90deg,transparent,rgba(0,0,0,0.55)_20%,rgba(0,0,0,0.55)_80%,transparent)] md:mt-[48px]">
       <span class="font-display text-[15px] tracking-[0.12em] text-[#d9b45f] uppercase">Atreia</span>
       <div class="flex flex-col items-center leading-none">
-        <span class="text-[11px] leading-[14px] font-semibold text-white uppercase">Saison 1 globale</span>
-        <span class="text-[18px] leading-[22px] font-bold text-white" data-since={LAUNCH}>Lancée le 5 octobre 2026</span>
+        <span class="text-[11px] leading-[14px] font-semibold text-white uppercase">{ui(locale, "Global Season 1", "Saison 1 globale")}</span>
+        <span class="text-[18px] leading-[22px] font-bold text-white" data-since={LAUNCH} data-locale={locale}>
+          {ui(locale, "Launched October 5, 2026", "Lancée le 5 octobre 2026")}
+        </span>
       </div>
     </div>
   )}
@@ -39,6 +43,11 @@ const Heading = compact ? "p" : "h1";
   // Le site est statique : le compteur « en cours depuis » se calcule chez le lecteur.
   for (const el of document.querySelectorAll<HTMLElement>("[data-since]")) {
     const days = Math.floor((Date.now() - Date.parse(`${el.dataset.since}T00:00:00Z`)) / 86_400_000);
-    if (days >= 1) el.innerHTML = `En cours depuis <span class="text-[22px]">${days}</span> jour${days > 1 ? "s" : ""}`;
+    if (days >= 1) {
+      const count = `<span class="text-[22px]">${days}</span>`;
+      el.innerHTML = el.dataset.locale === "fr"
+        ? `En cours depuis ${count} jour${days > 1 ? "s" : ""}`
+        : `Live for ${count} day${days > 1 ? "s" : ""}`;
+    }
   }
 </script>

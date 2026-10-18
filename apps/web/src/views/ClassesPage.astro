@@ -1,0 +1,127 @@
+---
+import { CLASSES, CLASS_KEYS, CLASS_GRADES_SOURCE, classVoteRevision } from "@aion2/shared/browser";
+import { ChartNoAxesColumnIncreasingIcon } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import ClassVotes from "@/components/ClassVotes";
+import ClassSigil from "@/components/ClassSigil.astro";
+import GameHero from "@/components/GameHero.astro";
+import Grade from "@/components/Grade.astro";
+import Picture from "@/components/Picture.astro";
+import SectionTitle from "@/components/SectionTitle.astro";
+import Base from "@/layouts/Base.astro";
+import { dateLocale } from "@/lib/i18n";
+import { ui, type Locale } from "@/lib/i18n";
+import { guideHref } from "@/lib/guides";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+
+// Décor derrière chaque sceau de classe : des scènes du jeu, pas des illustrations de la classe.
+const SCENES = ["01", "02", "03", "04", "06", "07", "10", "13"].map((n) => `/images/steam-screenshot-${n}.jpg`);
+
+const CLASS_NAMES: Record<string, string> = { gladiateur: "Gladiator", templier: "Templar", assassin: "Assassin", rodeur: "Ranger", sorcier: "Sorcerer", spiritualiste: "Spiritmaster", clerc: "Cleric", chantre: "Chanter" };
+const ROLE_NAMES: Record<string, string> = { tank: "Tank", "dps-melee": "Melee DPS", "dps-distance": "Ranged DPS", soin: "Healer", soutien: "Support" };
+const WEAPON_NAMES: Record<string, string> = { "Arme à deux mains": "Two-handed weapon", "Épée et bouclier": "Sword and shield", "Deux dagues": "Dual daggers", Arc: "Bow", Grimoire: "Spellbook", Orbe: "Orb", Masse: "Mace", Bâton: "Staff" };
+const className = (key: string, fallback: string, locale: Locale) => locale === "en" ? CLASS_NAMES[key] ?? fallback : fallback;
+const roleName = (key: string, locale: Locale) => locale === "en" ? ROLE_NAMES[key] ?? key : ({ tank: "Tank", "dps-melee": "DPS mêlée", "dps-distance": "DPS distance", soin: "Soins", soutien: "Soutien" } as Record<string, string>)[key] ?? key;
+const weaponName = (value: string, locale: Locale) => locale === "en" ? WEAPON_NAMES[value] ?? value : value;
+
+const COLS = [
+  { key: "pve", label: ui(locale, "Group PvE", "PvE en groupe") },
+  { key: "pvp", label: ui(locale, "Small-scale PvP", "PvP petit comité") },
+  { key: "solo", label: ui(locale, "Solo / beginners", "Solo / débutants") },
+] as const;
+---
+<Base locale={locale} title={ui(locale, "AION 2 class tier list", "Tier list des classes")} description={ui(locale, "A sourced tier list of all eight AION 2 classes for group PvE, small-scale PvP and solo play.", "Tier list des 8 classes d'AION 2 : rôle, arme, guides pratiques et classement sourcé pour le PvE en groupe, le PvP en petit comité et le solo.")}>
+  <div class="mx-auto max-w-[1374px] md:px-[24px]">
+    <GameHero name="AION 2" compact />
+    <div class="mt-[20px]">
+      <Breadcrumb items={[{ label: ui(locale, "Home", "Accueil"), href: locale === "fr" ? "/fr/" : "/" }, { label: ui(locale, "Tier list", "Tier list") }]} />
+    </div>
+
+    <!-- Relevé maxroll.gg (tier lists) : titre sur panneau illustré, cartes 2 colonnes image + titre 18/600, h 100. -->
+    <section class="relative isolate mt-[24px] overflow-hidden px-[20px] pt-[32px]">
+      <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><Picture src="/images/steam-screenshot-08.jpg" alt="" class="size-full object-cover" /></div>
+      <SectionTitle as="h1" icon={ChartNoAxesColumnIncreasingIcon} title={ui(locale, "Class tier list", "Tier list des classes")} color="#ff772f" />
+      <p class="mt-[12px] max-w-[640px] text-[16px] leading-[24px] text-[#95989b]">
+        {ui(locale, "Eight classes, practical guides and a community ranking for the Global version. Compare each role and playstyle before choosing your character.", "Huit classes, leurs guides pratiques et un classement communautaire pour la version globale. Compare le rôle et le mode de jeu avant de choisir ton personnage.")}
+      </p>
+      <ul class="mt-[24px] grid gap-[8px] sm:grid-cols-2 xl:grid-cols-3">
+        {CLASS_KEYS.map((key, i) => {
+          const c = CLASSES[key];
+          const href = "guide" in c ? guideHref(c.guide, locale) : undefined;
+          const Tag = href ? "a" : "div";
+          return (
+            <li>
+              <Tag href={href} class:list={["group flex h-[100px] items-center overflow-hidden rounded-[8px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c,0_0_1px_0_#2b2c2c] transition-shadow duration-150", href && "hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c]"]}>
+                <div class="relative h-full w-[170px] shrink-0 overflow-hidden">
+                  <Picture src={SCENES[i % SCENES.length]!} alt="" class="absolute inset-0 size-full object-cover opacity-70" />
+                  <ClassSigil cls={key} class="absolute inset-0 m-auto size-[64px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]" />
+                  <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_55%,#121212)]"></div>
+                </div>
+                <div class="min-w-0 px-[16px]">
+                  <p class="text-[18px] leading-[27px] font-semibold text-white">{className(key, c.name, locale)}</p>
+                  <p class="text-[14px] leading-[20px] text-[#95989b]">{roleName(c.role, locale)} · {weaponName(c.weapon, locale)}</p>
+                  {"grades" in c && <p class="mt-[4px] flex items-center gap-[6px] text-[12px] text-[#95989b]">{ui(locale, "Group", "Groupe")} <Grade grade={c.grades.pve} /> PvP <Grade grade={c.grades.pvp} /></p>}
+                </div>
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section class="mt-[48px] px-[20px]" aria-labelledby="notes">
+      <h2 id="notes" class="border-l-[4px] border-[#f00505] pl-[10px] text-[22px] leading-[24px] font-semibold text-white uppercase">{ui(locale, "Class ratings", "Notes par classe")}</h2>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-[#95989b]">{ui(locale, "Do you agree with your class ratings? Share your view below. Results are shared with all visitors. One vote per browser and class, editable and tied to this ranking version. Votes do not automatically change the ratings.", "Valides-tu les trois notes de ta classe ? Donne ton avis ci-dessous. Les résultats sont partagés entre visiteurs. Un avis par navigateur et par classe, modifiable et lié à cette version du classement. Le vote ne change pas automatiquement les notes.")}</p>
+      <p class="mt-2 text-xs text-[#95989b] sm:hidden">{ui(locale, "Scroll the table horizontally to reach the votes.", "Fais défiler le tableau horizontalement pour accéder aux votes.")}</p>
+      <noscript><p class="mt-3 text-sm text-[#95989b]">{ui(locale, "Enable JavaScript to view and submit votes.", "Active JavaScript pour consulter les votes et participer.")}</p></noscript>
+      <div tabindex="0" role="region" aria-label={ui(locale, "Eight-class ranking and votes, horizontal scroll", "Classement et votes des huit classes, défilement horizontal")} class="mt-[20px] overflow-x-auto rounded-[8px] border border-[#5c1515] bg-[#121212]">
+        <table class="w-full min-w-[46rem] text-[14px] leading-[20px]">
+          <thead class="bg-[#171717] text-left text-white">
+            <tr>
+              <th class="px-[16px] py-[12px] font-semibold">{ui(locale, "Class", "Classe")}</th>
+              <th class="px-[16px] py-[12px] font-semibold">{ui(locale, "Role", "Rôle")}</th>
+              {COLS.map((c) => <th class="px-[12px] py-[12px] text-center font-semibold">{c.label}</th>)}
+              <th class="px-[16px] py-[12px] font-semibold">{ui(locale, "Guide", "Guide")}</th>
+              <th class="px-[16px] py-[12px] font-semibold">{ui(locale, "Player feedback", "Avis des joueurs")}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#2b2c2c]">
+            {CLASS_KEYS.map((key) => {
+              const c = CLASSES[key];
+              return (
+                <tr class="transition-colors hover:bg-[#171717]">
+                  <td class="px-[16px] py-[10px]">
+                    <div class="flex items-center gap-[12px]">
+                      <ClassSigil cls={key} class="size-[40px] shrink-0" />
+                      <div>
+                        <p class="font-semibold text-white">{className(key, c.name, locale)}</p>
+                        <p class="text-[12px] text-[#95989b]">{weaponName(c.weapon, locale)}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-[16px] py-[10px] text-[#95989b]">{roleName(c.role, locale)}</td>
+                  {COLS.map((col) => (
+                    <td class="px-[12px] py-[10px] text-center">
+                      {"grades" in c ? <Grade grade={c.grades[col.key]} /> : <span class="text-[#737373]" aria-label={ui(locale, "Unranked", "Pas de note")}>–</span>}
+                    </td>
+                  ))}
+                  <td class="px-[16px] py-[10px]">
+                    {"guide" in c
+                      ? <a href={guideHref(c.guide, locale)} class="font-semibold text-[#057af0] hover:underline">{ui(locale, "Read guide", "Lire le guide")}</a>
+                      : <span class="text-[#737373]">{ui(locale, "Coming soon", "À venir")}</span>}
+                  </td>
+                  <td class="px-[16px] py-[14px]"><ClassVotes classKey={key} name={className(key, c.name, locale)} revision={classVoteRevision(key)} locale={locale} client:load /></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-[10px] text-[12px] text-[#737373]">
+        {ui(locale, "Editorial ranking: ", "Classement éditorial : ")} <a class="hover:text-white hover:underline" href={CLASS_GRADES_SOURCE.url} target="_blank" rel="noopener noreferrer">{CLASS_GRADES_SOURCE.name}</a>, {new Intl.DateTimeFormat(dateLocale(locale), { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${CLASS_GRADES_SOURCE.asOf}T12:00:00`))}, {ui(locale, "accessed 16 October 2026. Global-client kit analysis, without comparative damage measurements. PvE values group utility; PvP favors small-scale fights. Healers become more important in organized PvP. S, A and B are the source’s tiers, not official ratings. French class names remain to be confirmed on the Global client.", "consulté le 16 octobre 2026. Analyse des compétences du client global, sans mesure comparative des dégâts. Le PvE valorise l’utilité en groupe ; le PvP privilégie les petits affrontements. Les soigneurs gagnent en importance en PvP organisé. S, A et B sont les paliers de cette source, pas des notes officielles. Noms français des classes à confirmer sur le client global.")}
+      </p>
+    </section>
+  </div>
+</Base>

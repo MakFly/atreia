@@ -15,6 +15,8 @@ describe("Site statique", () => {
       await writeFile(join(distDir, "images/a.jpg"), "image");
       await writeFile(join(distDir, "index.html"), "<h1>Atreia</h1>");
       await writeFile(join(distDir, "404.html"), "<h1>Page introuvable</h1>");
+      await mkdir(join(distDir, "fr"));
+      await writeFile(join(distDir, "fr/404.html"), "<html lang=fr>Page introuvable</html>");
       const app = new Hono();
       mountWeb(app, { distDir, log: createLogger("error") });
 
@@ -35,6 +37,10 @@ describe("Site statique", () => {
       const missing = await app.request("/inconnu");
       expect(missing.status).toBe(404);
       expect(await missing.text()).toBe("<h1>Page introuvable</h1>");
+      const frenchMissing = await app.request("/fr/inconnu/");
+      expect(frenchMissing.status).toBe(404);
+      expect(frenchMissing.headers.get("Content-Language")).toBe("fr");
+      expect(await frenchMissing.text()).toBe("<html lang=fr>Page introuvable</html>");
     } finally {
       await rm(distDir, { recursive: true, force: true });
     }

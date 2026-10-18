@@ -1,0 +1,76 @@
+---
+import { ui, type Locale } from "@/lib/i18n";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+<steam-player-count data-locale={locale} class="block w-[124px] shrink-0 border-l border-[#2b2c2c] pl-3">
+  <a href="https://store.steampowered.com/app/3393110/AION_2/"
+    class="flex min-h-11 flex-col justify-center rounded text-xs leading-4 text-[#95989b] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    title={ui(locale, "Concurrent Steam players only. Checked every minute; Steam may cache the count.", "Joueurs simultanés sur Steam uniquement. Vérification chaque minute ; Steam peut mettre le chiffre en cache.")}>
+    <span class="flex items-center gap-1.5"><span data-indicator class="size-1.5 rounded-full bg-[#95989b]" aria-hidden="true"></span>Steam</span>
+    <span role="status" aria-atomic="true" class="tabular-nums" data-value>{ui(locale, "Loading…", "Chargement…")}</span>
+  </a>
+  <noscript><span class="text-xs text-[#95989b]">{ui(locale, "JavaScript required", "JavaScript requis")}</span></noscript>
+</steam-player-count>
+
+<script>
+  class SteamPlayerCount extends HTMLElement {
+    private cleanup?: () => void;
+
+    connectedCallback() {
+      this.cleanup?.();
+      const locale = this.dataset.locale === "fr" ? "fr" : "en";
+      const value = this.querySelector<HTMLElement>("[data-value]")!;
+      const indicator = this.querySelector<HTMLElement>("[data-indicator]")!;
+      const link = this.querySelector("a")!;
+      const scope = link.title;
+      const format = new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-GB");
+      let controller: AbortController | undefined;
+      let active = true;
+      let last: number | undefined;
+
+      const refresh = async () => {
+        if (document.hidden || controller) return;
+        controller = new AbortController();
+        const timeout = window.setTimeout(() => controller?.abort(), 8_000);
+        try {
+          const response = await fetch("/api/players/", { cache: "no-store", signal: controller.signal });
+          if (!response.ok) throw new Error();
+          const data = await response.json();
+          if (data.source !== "steam" || !Number.isSafeInteger(data.players) || data.players < 0 || !Number.isFinite(Date.parse(data.retrievedAt))) throw new Error();
+          if (!active) return;
+          last = data.players;
+          const text = `${format.format(data.players)} ${locale === "fr" ? "en jeu" : "playing"}`;
+          if (value.textContent !== text) value.textContent = text;
+          value.classList.add("text-[#e8e8e8]");
+          indicator.style.backgroundColor = "#4ade80";
+          link.title = `${scope} ${locale === "fr" ? "Relevé récupéré à" : "Count retrieved at"} ${new Date(data.retrievedAt).toLocaleTimeString(locale)}.`;
+        } catch {
+          if (!active) return;
+          value.classList.remove("text-[#e8e8e8]");
+          indicator.style.backgroundColor = "#95989b";
+          value.textContent = last === undefined
+            ? (locale === "fr" ? "Indisponible" : "Unavailable")
+            : `${format.format(last)} · ${locale === "fr" ? "ancien" : "stale"}`;
+          link.title = `${scope} ${locale === "fr" ? "Actualisation indisponible pour le moment." : "Refresh temporarily unavailable."}`;
+        } finally {
+          window.clearTimeout(timeout);
+          controller = undefined;
+        }
+      };
+      const timer = window.setInterval(() => void refresh(), 60_000);
+      const resume = () => { if (!document.hidden) void refresh(); };
+      document.addEventListener("visibilitychange", resume);
+      void refresh();
+      this.cleanup = () => {
+        active = false;
+        window.clearInterval(timer);
+        controller?.abort();
+        document.removeEventListener("visibilitychange", resume);
+      };
+    }
+
+    disconnectedCallback() { this.cleanup?.(); }
+  }
+  if (!customElements.get("steam-player-count")) customElements.define("steam-player-count", SteamPlayerCount);
+</script>

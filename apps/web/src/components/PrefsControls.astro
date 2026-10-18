@@ -1,15 +1,17 @@
 ---
+import { getLocale, ui } from "@/lib/i18n";
+const locale = getLocale(Astro.url.pathname);
 // Faction en JS natif (le site est sombre uniquement, comme la référence) : pas de React chargé pour deux boutons.
 ---
 <div class="flex items-center gap-1.5" data-prefs>
-  <div role="radiogroup" aria-label="Faction" class="bg-muted/70 hidden rounded-md border p-0.5 text-sm sm:flex">
+  <div role="radiogroup" aria-label={ui(locale, "Faction", "Faction")} class="bg-muted/70 hidden rounded-md border p-0.5 text-sm sm:flex">
     <button type="button" role="radio" data-faction-btn="elyos"
       class="rounded-[5px] px-2.5 py-1 font-medium text-muted-foreground transition-colors hover:text-foreground aria-checked:bg-primary aria-checked:text-primary-foreground">
       Elyos
     </button>
     <button type="button" role="radio" data-faction-btn="asmodien"
       class="rounded-[5px] px-2.5 py-1 font-medium text-muted-foreground transition-colors hover:text-foreground aria-checked:bg-primary aria-checked:text-primary-foreground">
-      Asmodiens
+      {ui(locale, "Asmodians", "Asmodiens")}
     </button>
   </div>
 </div>

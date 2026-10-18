@@ -1,0 +1,14 @@
+---
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+<div class="mermaid-skeleton" role="status">
+  <span class="sr-only">{label}</span>
+  <span class="mermaid-skeleton-node"></span>
+  <span class="mermaid-skeleton-link"></span>
+  <span class="mermaid-skeleton-node mermaid-skeleton-node-short"></span>
+  <span class="mermaid-skeleton-link"></span>
+  <span class="mermaid-skeleton-node"></span>
+</div>

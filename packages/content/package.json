@@ -2,5 +2,22 @@
   "name": "@aion2/content",
   "version": "0.1.0",
   "private": true,
-  "description": "Guides AION 2 en Markdown (frontmatter YAML). Un fichier = un guide."
+  "type": "module",
+  "description": "Guides AION 2 stockés dans SQLite. Une ligne par langue et par slug.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "put-guide": "bun scripts/put-guide.ts"
+  },
+  "dependencies": {
+    "@aion2/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
 }

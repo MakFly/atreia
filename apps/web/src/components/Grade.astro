@@ -1,9 +1,11 @@
 ---
 import type { Grade } from "@aion2/shared/browser";
+import { getLocale, ui } from "@/lib/i18n";
 interface Props { grade: Grade; size?: "sm" | "md" }
 const { grade, size = "sm" } = Astro.props;
+const locale = getLocale(Astro.url.pathname);
 ---
 <span
   class:list={["inline-flex items-center justify-center rounded font-extrabold text-white tabular-nums", size === "sm" ? "size-6 text-xs" : "size-9 text-base"]}
   style={`background: var(--grade-${grade.toLowerCase()})`}
-  aria-label={`Note ${grade}`}>{grade}</span>
+  aria-label={ui(locale, `Grade ${grade}`, `Note ${grade}`)}>{grade}</span>
