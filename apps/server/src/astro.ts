@@ -1,9 +1,10 @@
 import { EventEmitter } from "node:events";
 import { existsSync } from "node:fs";
 import type { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "node:http";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
+import { serveStatic } from "@hono/node-server/serve-static";
 import type { Hono } from "hono";
 import type { Logger } from "./logger.ts";
 
@@ -57,6 +58,19 @@ export async function mountAstro(app: Hono, distDir: string, log: Logger): Promi
   const loaded = await import(pathToFileURL(entry).href) as { handler?: NodeHandler };
   if (typeof loaded.handler !== "function") throw new Error(`Entrée Astro sans handler : ${entry}`);
   const handler = loaded.handler;
+  // En mode middleware, l'adaptateur Node ne sert pas dist/client : Hono s'en charge.
+  const clientDir = join(distDir, "client");
+  if (existsSync(clientDir)) {
+    app.use("/assets/*", async (c, next) => {
+      await next();
+      if (c.res.ok) c.header("Cache-Control", "public, max-age=31536000, immutable");
+    });
+    app.use("/images/*", async (c, next) => {
+      await next();
+      if (c.res.ok) c.header("Cache-Control", "public, max-age=604800, stale-while-revalidate=86400");
+    });
+    app.use("*", serveStatic({ root: relative(process.cwd(), clientDir) }));
+  }
   app.all("*", async (c) => {
     const response = await callNodeHandler(handler, c.req.raw);
     if (response.ok && c.req.path.startsWith("/assets/")) {
