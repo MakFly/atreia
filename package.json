@@ -2,7 +2,7 @@
   "name": "aion2-atreia",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.4.0",
+  "packageManager": "bun@1.4.4",
   "engines": {
     "node": ">=22.13"
   },

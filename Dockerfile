@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-ARG NODE_IMAGE=node:22-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392
-FROM oven/bun:1.4.0@sha256:5ff609364c049b54eb0ff560ec96319729a972078ef2c755d758f0c6ef89c2d6 AS bun-bin
+ARG NODE_IMAGE=node:22-bookworm-slim
+FROM oven/bun:1 AS bun-bin
 
 FROM ${NODE_IMAGE} AS build
 COPY --from=bun-bin /usr/local/bin/bun /usr/local/bin/bun
