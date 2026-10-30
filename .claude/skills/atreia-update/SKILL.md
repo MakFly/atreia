@@ -66,10 +66,18 @@ writer.
    from `lane budget`. Two runs must never touch the same slug or the same
    new image file.
 
+   Class lines of each patch note (skills, base stats, stigmas, passives,
+   class Daevanion nodes) also go into `CLASS_CHANGES` in
+   `packages/shared/src/class-changes.ts`, which feeds `/classes/equilibrage/`:
+   one entry per change, newest first, official French and English names
+   and URLs. Give this to one `redacteur` run that touches only that file.
+
 5. **Verify.** After all runs:
    - every slug still has `fr` and `en` rows, and every touched row has a new
      `updated` date and a correct `patch` scope;
-   - `make typecheck` and `make test` pass;
+   - `make typecheck` and `make test` pass (a malformed class change fails
+     the typecheck);
+   - every class line of the window's patch notes is in `CLASS_CHANGES`;
    - no dash aside in the touched guides
      (`grep -c -e '—' -e '–'` on the exported Markdown);
    - each triage row is closed: done, or `ignore` with its reason.
