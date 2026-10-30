@@ -10,14 +10,12 @@ import Picture from "@/components/Picture.astro";
 import SectionTitle from "@/components/SectionTitle.astro";
 import Base from "@/layouts/Base.astro";
 import { dateLocale } from "@/lib/i18n";
-import { ui, type Locale } from "@/lib/i18n";
+import { localizePath, ui, type Locale } from "@/lib/i18n";
 import { guideHref } from "@/lib/guides";
+import { CLASS_PORTRAITS } from "@/lib/class-portraits";
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
-
-// Décor derrière chaque sceau de classe : des scènes du jeu, pas des illustrations de la classe.
-const SCENES = ["01", "02", "03", "04", "06", "07", "10", "13"].map((n) => `/images/steam-screenshot-${n}.jpg`);
 
 const CLASS_NAMES: Record<string, string> = { gladiateur: "Gladiator", templier: "Templar", assassin: "Assassin", rodeur: "Ranger", sorcier: "Sorcerer", spiritualiste: "Spiritmaster", clerc: "Cleric", chantre: "Chanter" };
 const ROLE_NAMES: Record<string, string> = { tank: "Tank", "dps-melee": "Melee DPS", "dps-distance": "Ranged DPS", soin: "Healer", soutien: "Support" };
@@ -42,12 +40,15 @@ const COLS = [
     <!-- Relevé maxroll.gg (tier lists) : titre sur panneau illustré, cartes 2 colonnes image + titre 18/600, h 100. -->
     <section class="relative isolate mt-[24px] overflow-hidden px-[20px] pt-[32px]">
       <div class="absolute inset-y-0 right-0 -z-10 w-2/3 opacity-60 [mask-image:linear-gradient(to_right,transparent,black_40%)]"><Picture src="/images/steam-screenshot-08.jpg" alt="" class="size-full object-cover" /></div>
-      <SectionTitle as="h1" icon={ChartNoAxesColumnIncreasingIcon} title={ui(locale, "Class tier list", "Tier list des classes")} color="#ff772f" />
+      <div class="flex flex-wrap items-center justify-between gap-[14px]">
+        <SectionTitle as="h1" icon={ChartNoAxesColumnIncreasingIcon} title={ui(locale, "Class tier list", "Tier list des classes")} color="#ff772f" />
+        <a href={localizePath("/classes/equilibrage/", locale)} class="inline-flex min-h-[44px] items-center rounded-[8px] border border-[#2b2c2c] bg-[#1c1c1c] px-[14px] text-[14px] leading-[20px] font-semibold text-white transition-colors hover:border-[#5c5c5c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d9b45f]">{ui(locale, "Balance history", "Historique d'équilibrage")}</a>
+      </div>
       <p class="mt-[12px] max-w-[640px] text-[16px] leading-[24px] text-[#95989b]">
         {ui(locale, "Eight classes, practical guides and a community ranking for the Global version. Compare each role and playstyle before choosing your character.", "Huit classes, leurs guides pratiques et un classement communautaire pour la version globale. Compare le rôle et le mode de jeu avant de choisir ton personnage.")}
       </p>
       <ul class="mt-[24px] grid gap-[8px] sm:grid-cols-2 xl:grid-cols-3">
-        {CLASS_KEYS.map((key, i) => {
+        {CLASS_KEYS.map((key) => {
           const c = CLASSES[key];
           const href = "guide" in c ? guideHref(c.guide, locale) : undefined;
           const Tag = href ? "a" : "div";
@@ -55,7 +56,7 @@ const COLS = [
             <li>
               <Tag href={href} class:list={["group flex h-[100px] items-center overflow-hidden rounded-[8px] bg-[#121212] shadow-[inset_0_0_1px_0_#2b2c2c,0_0_1px_0_#2b2c2c] transition-shadow duration-150", href && "hover:shadow-[inset_0_0_1px_0_#5c5c5c,0_0_1px_0_#5c5c5c]"]}>
                 <div class="relative h-full w-[170px] shrink-0 overflow-hidden">
-                  <Picture src={SCENES[i % SCENES.length]!} alt="" class="absolute inset-0 size-full object-cover opacity-70" />
+                  <Picture src={CLASS_PORTRAITS[key]} alt="" class="absolute inset-0 size-full object-cover object-[50%_20%] opacity-70" />
                   <ClassSigil cls={key} class="absolute inset-0 m-auto size-[64px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]" />
                   <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_55%,#121212)]"></div>
                 </div>
@@ -104,7 +105,7 @@ const COLS = [
                   <td class="px-[16px] py-[10px] text-[#95989b]">{roleName(c.role, locale)}</td>
                   {COLS.map((col) => (
                     <td class="px-[12px] py-[10px] text-center">
-                      {"grades" in c ? <Grade grade={c.grades[col.key]} /> : <span class="text-[#737373]" aria-label={ui(locale, "Unranked", "Pas de note")}>–</span>}
+                      {"grades" in c ? <Grade grade={c.grades[col.key]} /> : <span class="text-[#737373]" aria-label={ui(locale, "Unranked", "Pas de note")}>-</span>}
                     </td>
                   ))}
                   <td class="px-[16px] py-[10px]">

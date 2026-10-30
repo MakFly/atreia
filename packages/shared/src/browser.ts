@@ -5,3 +5,4 @@ export * from "./servers.ts";
 export * from "./facts.ts";
 export * from "./classes.ts";
 export * from "./news.ts";
+export * from "./class-changes.ts";

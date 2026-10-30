@@ -4,3 +4,4 @@ export * from "./meta.ts";
 export * from "./servers.ts";
 export * from "./facts.ts";
 export * from "./classes.ts";
+export * from "./class-changes.ts";

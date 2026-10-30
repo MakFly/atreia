@@ -1,0 +1,172 @@
+---
+import { CLASS_CHANGES, classChangesFor, CLASSES, CLASS_KEYS } from "@aion2/shared/browser";
+import { CalendarDaysIcon, HistoryIcon } from "lucide-react";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import ClassSigil from "@/components/ClassSigil.astro";
+import GameHero from "@/components/GameHero.astro";
+import Picture from "@/components/Picture.astro";
+import SectionTitle from "@/components/SectionTitle.astro";
+import Base from "@/layouts/Base.astro";
+import { dateLocale, ui, type Locale } from "@/lib/i18n";
+import { guideHref } from "@/lib/guides";
+import { CLASS_PORTRAITS } from "@/lib/class-portraits";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+
+const CLASS_NAMES: Record<string, string> = {
+  gladiateur: "Gladiator",
+  templier: "Templar",
+  assassin: "Assassin",
+  rodeur: "Ranger",
+  sorcier: "Sorcerer",
+  spiritualiste: "Spiritmaster",
+  clerc: "Cleric",
+  chantre: "Chanter",
+};
+const ROLE_NAMES: Record<string, string> = {
+  tank: "Tank",
+  "dps-melee": "Melee DPS",
+  "dps-distance": "Ranged DPS",
+  soin: "Healer",
+  soutien: "Support",
+};
+const className = (key: string, fallback: string) => locale === "en" ? CLASS_NAMES[key] ?? fallback : fallback;
+const roleName = (role: string) => locale === "en" ? ROLE_NAMES[role] ?? role : ({ tank: "Tank", "dps-melee": "DPS mêlée", "dps-distance": "DPS distance", soin: "Soins", soutien: "Soutien" } as Record<string, string>)[role] ?? role;
+const kindLabel = (kind: "buff" | "nerf" | "fix" | "ajustement") => ({
+  buff: ui(locale, "Buff", "Buff"),
+  nerf: ui(locale, "Nerf", "Nerf"),
+  fix: ui(locale, "Fix", "Correctif"),
+  ajustement: ui(locale, "Adjustment", "Ajustement"),
+})[kind];
+const kindColor = (kind: "buff" | "nerf" | "fix" | "ajustement") => ({
+  buff: "#16a34a",
+  nerf: "#f00505",
+  fix: "#737373",
+  ajustement: "#2563eb",
+})[kind];
+const formatDate = (date: string) => new Intl.DateTimeFormat(dateLocale(locale), {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(new Date(`${date}T12:00:00`));
+
+const latestDate = CLASS_CHANGES.reduce((latest, change) => change.date > latest ? change.date : latest, "");
+const latestChanges = CLASS_CHANGES.filter((change) => change.date === latestDate);
+const latestKinds = (["buff", "nerf", "fix", "ajustement"] as const).map((kind) => ({
+  kind,
+  count: latestChanges.filter((change) => change.kind === kind).length,
+}));
+---
+
+<Base
+  locale={locale}
+  title={ui(locale, "AION 2 class balance history", "Historique de l'équilibrage des classes AION 2")}
+  description={ui(locale, "Official Global patch history for buffs, nerfs and fixes across all eight AION 2 classes, with links to the source notes.", "Historique des buffs, nerfs et correctifs des 8 classes d'AION 2 sur la version globale, tiré des notes de version officielles.")}
+>
+  <div class="mx-auto max-w-[1374px] md:px-[24px]">
+    <GameHero name="AION 2" compact />
+    <div class="mt-[20px]">
+      <Breadcrumb items={[
+        { label: ui(locale, "Home", "Accueil"), href: locale === "fr" ? "/fr/" : "/" },
+        { label: ui(locale, "Tier list", "Tier list"), href: "/classes/" },
+        { label: ui(locale, "Balance history", "Équilibrage") },
+      ]} />
+    </div>
+
+    <section class="mt-[24px] px-[20px]">
+      <SectionTitle as="h1" icon={HistoryIcon} title={ui(locale, "Class balance history", "Équilibrage des classes")} color="#f00505" />
+      <p class="mt-[12px] max-w-[760px] text-[16px] leading-[24px] text-[#95989b]">
+        {ui(locale, "Official Global (EU) patch notes only, listed newest first. Each entry links directly to its source notes.", "Notes de mise à jour officielles de la version globale (EU) uniquement, de la plus récente à la plus ancienne. Chaque entrée renvoie vers sa source officielle.")}
+      </p>
+    </section>
+
+    <section aria-labelledby="latest-patch" class="mx-[20px] mt-[24px] rounded-[10px] border border-[#2b2c2c] bg-[#121212] p-[16px] sm:p-[20px]">
+      <div class="flex flex-col gap-[14px] sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <SectionTitle as="h2" icon={CalendarDaysIcon} id="latest-patch" title={ui(locale, "Latest patch", "Dernier patch")} color="#d9b45f" />
+          <p class="mt-[10px] text-[15px] leading-[22px] text-[#95989b]">{formatDate(latestDate)}</p>
+        </div>
+        <ul class="flex flex-wrap gap-[8px]" aria-label={ui(locale, "Change counts", "Nombre de changements")}>
+          {latestKinds.map(({ kind, count }) => (
+            <li class="flex items-center gap-[7px] rounded-[8px] border border-[#2b2c2c] bg-[#1c1c1c] px-[10px] py-[7px] text-[13px] leading-[18px] text-white">
+              <span class="size-[8px] rounded-full" style={`background-color:${kindColor(kind)}`} aria-hidden="true"></span>
+              <span>{kindLabel(kind)}</span>
+              <span class="font-semibold tabular-nums">{count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <nav aria-label={ui(locale, "Jump to a class", "Aller à une classe")} class="sticky top-[60px] z-[50] mt-[24px] border-y border-[#2b2c2c] bg-[#121212]/95 py-[8px] backdrop-blur md:top-0">
+      <div class="overflow-x-auto px-[20px] [scrollbar-width:thin]">
+        <ul class="flex min-w-max gap-[8px]">
+          {CLASS_KEYS.map((key) => {
+            const c = CLASSES[key];
+            return (
+              <li>
+                <a href={`#${key}`} class="flex min-h-[48px] items-center gap-[8px] rounded-[8px] border border-[#2b2c2c] bg-[#1c1c1c] py-[5px] pr-[12px] pl-[5px] text-[13px] font-semibold text-[#e8e8e8] transition-colors hover:border-[#5c5c5c] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d9b45f]">
+                  <Picture src={CLASS_PORTRAITS[key]} alt="" class="size-[36px] rounded-[5px] object-cover object-[50%_20%]" />
+                  <span>{className(key, c.name)}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </nav>
+
+    <div class="mt-[28px] space-y-[32px] px-[20px]">
+      {CLASS_KEYS.map((key, index) => {
+        const c = CLASSES[key];
+        const changes = classChangesFor(key);
+        return (
+          <section id={key} aria-labelledby={`${key}-heading`} class="scroll-mt-[132px] rounded-[10px] border border-[#2b2c2c] bg-[#121212] p-[14px] sm:p-[20px] md:scroll-mt-[112px]">
+            <div class="flex flex-col gap-[16px] sm:flex-row sm:items-center">
+              <div class="relative h-[130px] shrink-0 overflow-hidden rounded-[8px] sm:w-[200px]">
+                <Picture
+                  src={CLASS_PORTRAITS[key]}
+                  alt={ui(locale, `Official ${className(key, c.name)} artwork`, `Illustration officielle de la classe ${c.name}`)}
+                  eager={index === 0}
+                  class="absolute inset-0 size-full object-cover object-[50%_20%]"
+                />
+                <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,18,18,0.1),rgba(18,18,18,0.7))] sm:bg-[linear-gradient(90deg,transparent_45%,#121212)]"></div>
+                <ClassSigil cls={key} class="absolute inset-0 m-auto size-[58px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]" />
+              </div>
+              <div class="min-w-0">
+                <h2 id={`${key}-heading`} class="text-[24px] leading-[30px] font-bold text-white">{className(key, c.name)}</h2>
+                <p class="mt-[4px] text-[14px] leading-[20px] text-[#95989b]">{roleName(c.role)}</p>
+                {"guide" in c && c.guide && <a href={guideHref(c.guide, locale)} class="mt-[10px] inline-flex min-h-[44px] items-center rounded-[6px] text-[14px] font-semibold text-[#057af0] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d9b45f]">{ui(locale, "Read class guide", "Lire le guide de classe")}</a>}
+              </div>
+            </div>
+
+            {changes.length > 0 ? (
+              <ol class="relative mt-[22px] ml-[8px] border-l border-[#3b3b3b]">
+                {changes.map((change) => (
+                  <li class="relative pb-[24px] pl-[24px] last:pb-0">
+                    <span class="absolute top-[5px] left-[-5px] size-[9px] rounded-full border-2 border-[#121212]" style={`background-color:${kindColor(change.kind)}`} aria-hidden="true"></span>
+                    <div class="flex flex-wrap items-center gap-[8px]">
+                      <time datetime={change.date} class="text-[13px] leading-[20px] text-[#95989b]">{formatDate(change.date)}</time>
+                      <span class="rounded-[6px] px-[8px] py-[3px] text-[12px] leading-[16px] font-semibold text-[#121212]" style={`background-color:${kindColor(change.kind)}`}>{kindLabel(change.kind)}</span>
+                      {change.classes === "all" && <span class="rounded-[6px] border border-[#5c5c5c] px-[8px] py-[3px] text-[12px] leading-[16px] text-[#c9c9c9]">{ui(locale, "All classes", "Toutes les classes")}</span>}
+                      {change.classes !== "all" && change.classes.length > 1 && <span class="rounded-[6px] border border-[#5c5c5c] px-[8px] py-[3px] text-[12px] leading-[16px] text-[#c9c9c9]">{ui(locale, "Several classes", "Plusieurs classes")}</span>}
+                    </div>
+                    {change.skill && <p class="mt-[8px] text-[16px] leading-[22px] font-semibold text-white">{change.skill[locale]}</p>}
+                    <p class="mt-[6px] text-[14px] leading-[22px] text-[#c9c9c9]">{change.change[locale]}</p>
+                    {change.before && change.after && <p class="mt-[8px] inline-flex rounded-[6px] bg-[#1c1c1c] px-[10px] py-[6px] text-[13px] leading-[18px] text-[#e8e8e8]"><span class="sr-only">{ui(locale, "Before and after: ", "Avant et après : ")}</span>{change.before} → {change.after}</p>}
+                    <a href={change.source[locale]} target="_blank" rel="noopener noreferrer" class="mt-[10px] inline-flex min-h-[44px] items-center text-[13px] leading-[20px] font-semibold text-[#057af0] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d9b45f]">{ui(locale, "Official notes", "Notes officielles")}</a>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p class="mt-[22px] rounded-[8px] bg-[#1c1c1c] px-[14px] py-[12px] text-[14px] leading-[22px] text-[#95989b]">
+                {ui(locale, "No official change published since the global launch.", "Aucun changement officiel publié depuis le lancement global.")}
+              </p>
+            )}
+          </section>
+        );
+      })}
+    </div>
+  </div>
+</Base>

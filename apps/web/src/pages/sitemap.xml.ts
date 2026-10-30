@@ -3,7 +3,7 @@ import { allGuides, guideHref } from "@/lib/guides";
 
 export const prerender = false;
 
-const STATIC_PATHS = ["/", "/fr/", "/guides/", "/fr/guides/", "/classes/", "/fr/classes/", "/actualites/", "/fr/actualites/", "/serveurs/", "/fr/serveurs/"];
+const STATIC_PATHS = ["/", "/fr/", "/guides/", "/fr/guides/", "/classes/", "/fr/classes/", "/classes/equilibrage/", "/fr/classes/equilibrage/", "/actualites/", "/fr/actualites/", "/serveurs/", "/fr/serveurs/"];
 
 export const GET: APIRoute = async ({ site }) => {
   if (!site) throw new Error("SITE_URL manquant pour le sitemap");
