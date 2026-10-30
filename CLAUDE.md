@@ -48,3 +48,5 @@ the single-guide route. Astro renders that Markdown.
 
 Article work goes to the `redacteur` agent. Canonical prompt:
 `.claude/agents/redacteur.md`. See `docs/agent-redaction.md`.
+Catching up with game updates since the last sync goes through the
+`atreia-update` skill, which dispatches each guide to `redacteur`.

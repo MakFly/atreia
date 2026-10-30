@@ -87,7 +87,9 @@ agent. That one agent owns live research, video evidence and the article.
 Canonical text: `.claude/agents/redacteur.md`. Grok also sees it through
 `.grok/agents/redacteur.md`. Codex uses `.codex/agents/redacteur.toml`.
 Caption commands stay in `.claude/agents/caption-extraction.md`. New images
-stay in the `aion2-images` skill. There is no editorial skill. This routing
+stay in the `aion2-images` skill. There is no editorial skill: the
+`atreia-update` skill only finds what changed in the game since the last
+sync, triages it and dispatches each guide to `redacteur`. This routing
 does not authorize delegation for unrelated tasks. See
 `docs/agent-redaction.md` for invocation and tool prerequisites.
 
