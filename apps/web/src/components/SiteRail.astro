@@ -1,7 +1,12 @@
 ---
 // Rail fixe à gauche (≥ md), relevé maxroll.gg : 96 px, noir, logo puis accueil, guides et pastille AION 2 de 40 px.
+import { CLASSES, CLASS_KEYS } from "@aion2/shared/browser";
 import { BookOpenTextIcon, HouseIcon } from "lucide-react";
 import Logo from "@/components/Logo.astro";
+import Picture from "@/components/Picture.astro";
+import { CLASS_PORTRAITS } from "@/lib/class-portraits";
+import { classLabel, classRole } from "@/lib/classes";
+import { guideHref } from "@/lib/guides";
 import { getLocale, localizePath, ui } from "@/lib/i18n";
 interface Props { current: string }
 const { current } = Astro.props;
@@ -31,5 +36,24 @@ const guidesHref = localizePath("/guides/", locale);
       <Logo class="size-[24px]" />
       <span class="sr-only">AION 2</span>
     </a>
+  </nav>
+  <span class="mt-[14px] h-px w-[40px] bg-[#2b2c2c]" aria-hidden="true"></span>
+  <!-- Classes : portrait vers le guide, infobulle CSS immédiate (sans délai ni title natif). -->
+  <nav class="mt-[14px] flex flex-col items-center gap-[8px]" aria-label={ui(locale, "Class guides", "Guides des classes")}>
+    {CLASS_KEYS.map((key) => {
+      const href = guideHref(CLASSES[key].guide, locale);
+      const active = current === href;
+      return (
+        <a href={href} aria-label={classLabel(key, locale)} aria-current={active ? "page" : undefined} class="group relative flex size-[36px] items-center justify-center">
+          <span class:list={["block size-[36px] overflow-hidden rounded-full border-2 transition-colors", active ? "border-[#057af0]" : "border-[#2b2c2c] group-hover:border-[#95989b] group-focus-visible:border-[#95989b]"]}>
+            <Picture src={CLASS_PORTRAITS[key]} alt="" class="size-full scale-[1.6] object-cover object-[50%_25%]" />
+          </span>
+          <span class="pointer-events-none invisible absolute top-1/2 left-full z-[120] ml-[12px] -translate-y-1/2 rounded-[6px] border border-[#2b2c2c] bg-[#121212] px-[10px] py-[6px] whitespace-nowrap shadow-[0_4px_16px_rgba(0,0,0,0.5)] group-hover:visible group-focus-visible:visible" aria-hidden="true">
+            <span class="block text-[13px] leading-[16px] font-semibold text-white">{classLabel(key, locale)}</span>
+            <span class="block text-[12px] leading-[15px] text-[#95989b]">{classRole(key, locale)}</span>
+          </span>
+        </a>
+      );
+    })}
   </nav>
 </aside>
