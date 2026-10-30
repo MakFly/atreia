@@ -334,5 +334,53 @@
     "width": 1280,
     "height": 720,
     "file": "official-purple-magic-hall.jpg"
+  },
+  {
+    "url": "https://fizz-download.playnccdn.com/lg/file/AION/download/1a169901b51-44a488e5-a202-4cf6-aee0-b22afb40042c",
+    "source": "official",
+    "title": "Ludra se réveillera le 4 novembre, illustration de l'annonce : créature ailée aux éclairs violets face à trois Daevas",
+    "page": "https://aion2.plaync.com/fr-fr/board/notice/view?articleId=6adbaeb028c7452635072cf3",
+    "date": "2026-10-23",
+    "license": "NC AION2 fan content guidelines (not free)",
+    "credit": "© NC Corporation. All Rights Reserved.",
+    "width": 1280,
+    "height": 545,
+    "file": "official-ludra-returns.jpg"
+  },
+  {
+    "url": "https://aion2.plaync.com/fr-fr/characters/index",
+    "source": "official",
+    "title": "Informations sur les personnages (site officiel AION 2), onglet Daevanion, plateau Ariel verrouillé (0/152) : capture recadrée sur les onglets et la grille, sans nom ni profil de personnage",
+    "page": "https://aion2.plaync.com/fr-fr/characters/index",
+    "date": "2026-10-30",
+    "license": "NC AION2 fan content guidelines (not free)",
+    "credit": "© NC Corporation. All Rights Reserved.",
+    "width": 1180,
+    "height": 740,
+    "file": "official-ariel-daevanion-board.jpg"
+  },
+  {
+    "url": "https://fizz-download.playnccdn.com/lg/file/Promotion/download/1a158b09797-5ca3f8d4-5ebc-4897-a2fb-aaf6421e68d2",
+    "source": "official",
+    "title": "[Event] Rise to the Challenge, bannière de l’événement : pierre d’esprit de résurrection (saison 1)",
+    "page": "https://store.steampowered.com/news/app/3393110/view/1847286114027716",
+    "date": "2026-10-21",
+    "license": "NC AION2 fan content guidelines (not free)",
+    "credit": "© NC Corporation. All Rights Reserved.",
+    "width": 1280,
+    "height": 545,
+    "file": "official-rise-to-the-challenge-2026.jpg"
+  },
+  {
+    "url": "https://fizz-download.playnccdn.com/lg/file/AION/download/1a18211ac42-728f0ffa-1f1e-4825-9442-b1edb4b5181a",
+    "source": "official",
+    "title": "[Avis] 28 octobre - Présentation d’une nouvelle apparence, tenue L’arrivée du renard (Vulpine Sunshower)",
+    "page": "https://aion2.plaync.com/fr-fr/board/notice/view?articleId=6abe641528c7452635072cda",
+    "date": "2026-10-28",
+    "license": "NC AION2 fan content guidelines (not free)",
+    "credit": "© NC Corporation. All Rights Reserved.",
+    "width": 1280,
+    "height": 545,
+    "file": "official-vulpine-sunshower-2026.jpg"
   }
 ]
