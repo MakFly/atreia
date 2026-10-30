@@ -12,8 +12,7 @@ n’est republié intégralement.
 `GET /api/news/?lang=fr` (ou `en`, valeur par défaut) alimente le fil.
 Le gestionnaire Hono est monté dans `apps/server/src/app.ts` pour
 l’hébergement avec l’API. `apps/web/news-dev.mjs` le rend également accessible
-sur le serveur Astro local existant. `api/news.ts` est un adaptateur optionnel
-pour un hébergement avec fonctions Node. Un hébergement purement statique doit
+sur le serveur Astro local existant. Un hébergement purement statique doit
 router `/api/news/` vers ce gestionnaire ; les fichiers HTML seuls ne suffisent
 pas à synchroniser les annonces.
 
