@@ -14,7 +14,7 @@ les requêtes simultanées. L'appel Steam expire après 5 secondes. Une erreur
 renvoie HTTP 503 sans nombre fictif. Le composant conserve son dernier chiffre
 avec la mention « ancien », ou affiche « indisponible » sans relevé précédent.
 
-Le même gestionnaire sert dans Hono (`apps/server/src/players.ts`), dans le
-serveur Astro existant (`apps/web/players-dev.mjs`) et dans la fonction Vercel
-`api/players.ts`. Un hébergement uniquement statique doit également fournir
-cette fonction ; aucune clé Steam ni variable secrète n'est nécessaire.
+Le même gestionnaire sert dans Hono (`apps/server/src/players.ts`) et dans le
+serveur Astro local (`apps/web/players-dev.mjs`). Un hébergement uniquement
+statique doit router `/api/players/` vers ce gestionnaire ; aucune clé Steam ni
+variable secrète n'est nécessaire.
