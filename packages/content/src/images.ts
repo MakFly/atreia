@@ -55,6 +55,9 @@ export function assertGuideImages(
     const full = resolve(root, name);
     if (!full.startsWith(`${root}${sep}`) || !existsSync(full)) {
       problems.push(`« ${src} » est inscrit dans le manifest mais le fichier est absent`);
+    } else if (/\.(jpe?g|png)$/i.test(full) && !existsSync(full.replace(/\.(jpe?g|png)$/i, ".webp"))) {
+      // <Picture> serves the WebP sibling first: without it the image does not show.
+      problems.push(`« ${src} » n'a pas sa variante WebP de même nom`);
     }
   }
   if (options.catalogue) {

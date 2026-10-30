@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseGuide } from "@aion2/shared";
+import { parseGuide, type Guide } from "@aion2/shared";
 import { afterEach, describe, expect, it } from "vitest";
 import { openGuideStore } from "./db.ts";
 import { assertGuideImages } from "./images.ts";
@@ -21,11 +21,14 @@ describe("guide images", () => {
     if (dir) await rm(dir, { recursive: true, force: true });
   });
 
-  async function layout(files: string[], manifest: string[] = files) {
+  async function layout(files: string[], manifest: string[] = files, webp = true) {
     dir = await mkdtemp(join(tmpdir(), "atreia-images-"));
     const imagesDir = join(dir, "images");
     await mkdir(imagesDir);
-    for (const name of files) await writeFile(join(imagesDir, name), "");
+    for (const name of files) {
+      await writeFile(join(imagesDir, name), "");
+      if (webp) await writeFile(join(imagesDir, name.replace(/\.(jpe?g|png)$/i, ".webp")), "");
+    }
     const manifestPath = join(imagesDir, "manifest.json");
     await writeFile(manifestPath, JSON.stringify(manifest.map((file) => ({ file }))));
     return { imagesDir, manifestPath };
@@ -37,6 +40,14 @@ describe("guide images", () => {
 ![Une scène](/images/scene.jpg)
 `);
     expect(() => assertGuideImages({ ...guide, cover: { src: "/images/shot.jpg", alt: "Scène" } }, options)).not.toThrow();
+  });
+
+  it("refuse une couverture JPEG sans sa variante WebP", async () => {
+    const options = await layout(["shot.jpg"], ["shot.jpg"], false);
+    const guide = parseGuide("essai", front);
+    expect(() => assertGuideImages({ ...guide, cover: { src: "/images/shot.jpg", alt: "Scène" } }, options)).toThrow(
+      /shot\.jpg.*variante WebP/,
+    );
   });
 
   it("refuse un fichier répété dans le guide ou déjà pris par un autre slug", async () => {
@@ -86,7 +97,7 @@ describe("guide images", () => {
       imagesDir: resolve(repo, "apps/web/public/images"),
       manifestPath: resolve(repo, "apps/web/public/images/manifest.json"),
     };
-    const catalogue = [];
+    const catalogue: Guide[] = [];
     try {
       for (const locale of ["fr", "en"] as const) {
         for (const meta of store.list(locale)) {

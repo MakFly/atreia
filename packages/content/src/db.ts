@@ -105,7 +105,7 @@ export function createGuideDatabase(file: string, editions: GuideEdition[]): voi
     try {
       const insert = db.prepare(INSERT);
       for (const edition of editions) insert.run(...bind(edition.locale, edition.guide));
-      assertCatalogue(db);
+      assertCatalogue(db, true);
       db.exec("COMMIT");
     } catch (error) {
       db.exec("ROLLBACK");
@@ -132,13 +132,17 @@ export function writeGuide(file: string, locale: ContentLocale, guide: Guide): v
   }
 }
 
-/** Open the catalogue for reading. Invalid rows and missing translations fail immediately. */
-export function openGuideStore(file = resolveGuidesDb()): GuideStore {
+/**
+ * Open the catalogue for reading. Invalid rows and missing translations fail immediately.
+ * `requirePairs: false` is for the writer only: it must read the catalogue while a new slug
+ * has its first edition and not yet the second.
+ */
+export function openGuideStore(file = resolveGuidesDb(), { requirePairs = true } = {}): GuideStore {
   if (!existsSync(file)) throw new Error(`Base des guides introuvable : ${file}`);
   const db = new DatabaseSync(file, { readOnly: true });
   db.exec("PRAGMA busy_timeout = 5000");
   db.exec("PRAGMA query_only = ON");
-  assertCatalogue(db);
+  assertCatalogue(db, requirePairs);
 
   const byLocale = db.prepare("SELECT * FROM guides WHERE locale = ?");
   const bySlug = db.prepare("SELECT * FROM guides WHERE locale = ? AND slug = ?");
@@ -190,11 +194,11 @@ function bind(locale: ContentLocale, guide: Guide): SQLInputValue[] {
   ];
 }
 
-function assertCatalogue(db: DatabaseSync): void {
+function assertCatalogue(db: DatabaseSync, requirePairs: boolean): void {
   const rows = db.prepare("SELECT locale, slug FROM guides").all() as { locale: string; slug: string }[];
   const en = new Set(rows.filter((row) => row.locale === "en").map((row) => row.slug));
   const fr = new Set(rows.filter((row) => row.locale === "fr").map((row) => row.slug));
-  for (const slug of new Set([...en, ...fr])) {
+  for (const slug of requirePairs ? new Set([...en, ...fr]) : []) {
     if (!en.has(slug) || !fr.has(slug)) throw new Error(`Missing EN/FR guide translation: ${slug}`);
   }
   readRows(db.prepare("SELECT * FROM guides").all());

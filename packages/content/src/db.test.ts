@@ -47,6 +47,17 @@ describe("guides sqlite", () => {
     expect(() => openGuideStore(file)).toThrow("Missing EN/FR guide translation: seul");
   });
 
+  it("laisse l'écriture relire le catalogue quand un nouveau slug n'a qu'une édition", async () => {
+    dir = await mkdtemp(join(tmpdir(), "atreia-guides-"));
+    const file = join(dir, "guides.sqlite");
+    createGuideDatabase(file, editions());
+    writeGuide(file, "fr", parseGuide("seul", source));
+    const store = openGuideStore(file, { requirePairs: false });
+    expect(store.get("seul", "fr")?.slug).toBe("seul");
+    expect(store.get("seul", "en")).toBeUndefined();
+    store.close();
+  });
+
   it("remplace le corps d'une édition déjà écrite", async () => {
     dir = await mkdtemp(join(tmpdir(), "atreia-guides-"));
     const file = join(dir, "guides.sqlite");

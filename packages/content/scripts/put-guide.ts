@@ -18,7 +18,7 @@ try {
   const slug = basename(file, ".md");
   const guide = parseGuide(slug, await readFile(resolve(file), "utf8"));
   const db = resolveGuidesDb();
-  const store = openGuideStore(db);
+  const store = openGuideStore(db, { requirePairs: false });
   const catalogue: Guide[] = [];
   try {
     for (const edition of ["fr", "en"] as const) {
